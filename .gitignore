@@ -1,0 +1,28 @@
+# User shell configs
+.bash_profile
+.bashrc
+.zprofile
+.zshrc
+.profile
+.ripgreprc
+
+# Git config
+.gitconfig
+.gitmodules
+
+# IDE configs
+.idea/
+.vscode/
+
+# Claude Code config
+.claude/
+
+# MCP config
+.mcp.json
+
+# Git internals (should not be in repo root)
+HEAD
+config
+hooks
+objects
+refs

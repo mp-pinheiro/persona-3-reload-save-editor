@@ -131,14 +131,14 @@ class Persona3Save:
         self.SaveHeader["LenLastName"]=len(self.SaveHeader["lastname"])
         self.SaveHeader["LenFirstName"]=len(self.SaveHeader["firstname"])
         self.Data={}
-        self.Data["money"]=self.LoadByNameN(self.js, "UInt32Property", 0,7257)
-        self.Data["playtime"] = self.LoadByNameN(self.js, "UInt32Property", 0,12832)
-        self.Data["characters"]={self.SaveHeader["firstname"].lower():{"current_pv":13070,"current_pc":13071,"level":13074,"exp":13075},"yukari":{"current_pv":13246,"current_pc":13247,"level":13263,"exp":13264},"junpei":{"current_pv":13422,"current_pc":13423,"level":13439,"exp":13440}}
-        self.Data["dangerous"]={"player_x":self.LoadByNameN(self.js, "UInt32Property", 0,5219),"player_y":self.LoadByNameN(self.js, "UInt32Property", 0,5220),"player_direction":self.LoadByNameN(self.js, "UInt32Property", 0,5218)}#"player_z":self.LoadByNameN(self.js, "UInt32Property", 0,5221)}
-        self.Data["socialrank"] = {"academics":5352,"charm":5354,"courage":5356}
-        self.Data["date"]={"time":1929,"day":1928}#dayskip = 1930
-        self.Data["personavalueid"]={"persona":[13086,13098,13110,13122,13134,13146,13158],"level":[13087,13099,13111,13123,13135,13147,13159],"exp":[13088,13100,13112,13124,13136,13148,13160],"skill_slot_1":[13089,13101,13113,13125,13137,13149,13161],"skill_slot_2":[13090,13102,13114,13126,13138,13150,13162],"skill_slot_3":[13091,13103,13115,13127,13139,13151,13163],"skill_slot_4":[13092,13104,13116,13128,13140,13152,13164],"fo_ma_en_ag":[13093,13105,13117,13129,13141,13153,13165],"ch":[13094,13106,13118,13130,13142,13154,13166]}#,"skill_slot_4":[0,0,0,0,13143,0]}
-        self.Data["sociallink"]={"aigis":5342,"nyx annihilation team":5340,"kamiki":5338,"suemitsu":5336,"hayase":5334,"mutatsu":5332,"tanaka":5330,"bebe":5328,"pharos":5326,"maiko":5324,"nishiwaki":5322,"hiraga":5320,"maya":5318,"fushimi":5316,"miyamoto":5314,"takeba":5312,"kitamura":5310,"odagiri":5308,"kirijo":5306,"yamagishi":5304,"tomochika":5302,"sees":5300}
+        self.Data["money"]=self.LoadByNameN(self.js, "UInt32Property", 0,7261)
+        self.Data["playtime"] = self.LoadByNameN(self.js, "UInt32Property", 0,12836)
+        self.Data["characters"]={self.SaveHeader["firstname"].lower():{"current_pv":13074,"current_pc":13075,"level":13078,"exp":13079},"yukari":{"current_pv":13250,"current_pc":13251,"level":13267,"exp":13268},"junpei":{"current_pv":13426,"current_pc":13427,"level":13443,"exp":13444}}
+        self.Data["dangerous"]={"player_x":self.LoadByNameN(self.js, "UInt32Property", 0,5223),"player_y":self.LoadByNameN(self.js, "UInt32Property", 0,5224),"player_direction":self.LoadByNameN(self.js, "UInt32Property", 0,5222)}#"player_z":self.LoadByNameN(self.js, "UInt32Property", 0,5221)}
+        self.Data["socialrank"] = {"academics":5356,"charm":5358,"courage":5360}
+        self.Data["date"]={"time":1933,"day":1932}#dayskip = 1934
+        self.Data["personavalueid"]={"persona":[13090,13102,13114,13126,13138,13150,13162],"level":[13091,13103,13115,13127,13139,13151,13163],"exp":[13092,13104,13116,13128,13140,13152,13164],"skill_slot_1":[13093,13105,13117,13129,13141,13153,13165],"skill_slot_2":[13094,13106,13118,13130,13142,13154,13166],"skill_slot_3":[13095,13107,13119,13131,13143,13155,13167],"skill_slot_4":[13096,13108,13120,13132,13144,13156,13168],"fo_ma_en_ag":[13097,13109,13121,13133,13145,13157,13169],"ch":[13098,13110,13122,13134,13146,13158,13170]}#,"skill_slot_4":[0,0,0,0,13143,0]}
+        self.Data["sociallink"]={"aigis":5346,"nyx annihilation team":5344,"kamiki":5342,"suemitsu":5340,"hayase":5338,"mutatsu":5336,"tanaka":5334,"bebe":5332,"pharos":5330,"maiko":5328,"nishiwaki":5326,"hiraga":5324,"maya":5322,"fushimi":5320,"miyamoto":5318,"takeba":5316,"kitamura":5314,"odagiri":5312,"kirijo":5310,"yamagishi":5308,"tomochika":5306,"sees":5304}
     def SaveChange(self):
         with tempfile.NamedTemporaryFile(mode='w',suffix='.json', delete=False) as temp_file:
             json.dump(self.js, temp_file, indent=2)
@@ -324,11 +324,11 @@ class Persona3Save:
                     new_name = self.split_string(new_name,8,True)
                     counter=0
                     for i in [0,0,0,0,0,0,0,0]:
-                        self.js=self.DelByNameN(self.js, "UInt32Property", 0,17950+counter)
+                        self.js=self.DelByNameN(self.js, "UInt32Property", 0,17954+counter)
                     counter=0
                     for i in new_name:
                         counter+=1
-                        self.js=self.SaveByNameN(self.js, "UInt32Property", 0, int.from_bytes(binascii.unhexlify(i),byteorder="little"),17950+counter)
+                        self.js=self.SaveByNameN(self.js, "UInt32Property", 0, int.from_bytes(binascii.unhexlify(i),byteorder="little"),17954+counter)
                     print(new_name)
                     break
             elif len(new_name)==0:
@@ -348,11 +348,11 @@ class Persona3Save:
                     new_name = self.split_string(new_name,8,True)
                     counter=0
                     for i in [0,0,0,0,0,0,0,0]:
-                        self.js=self.DelByNameN(self.js, "UInt32Property", 0,17934+counter)
+                        self.js=self.DelByNameN(self.js, "UInt32Property", 0,17938+counter)
                     counter=0
                     for i in new_name:
                         counter+=1
-                        self.js=self.SaveByNameN(self.js, "UInt32Property", 0, int.from_bytes(binascii.unhexlify(i),byteorder="little"),17934+counter)
+                        self.js=self.SaveByNameN(self.js, "UInt32Property", 0, int.from_bytes(binascii.unhexlify(i),byteorder="little"),17938+counter)
                     print(new_name)
                     break
             elif len(new_name)==0:
@@ -488,7 +488,7 @@ class Persona3Save:
                                     else:
                                         new_bin+="0"
                                 new_bin=eval(new_bin)
-                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0,new_bin,103)
+                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0,new_bin,107)
                                 break
                             except:
                                 if new_level == "":
@@ -604,7 +604,7 @@ class Persona3Save:
                 play=int(play)
                 if play >= 0 and play <= 107998200:
                     self.js[1]["value"]=self.SaveByName(self.js[1]["value"],"PlayTime",0,1,play,"UInt32Property")
-                    self.js=self.SaveByNameN(self.js, "UInt32Property", 0, play,12832)
+                    self.js=self.SaveByNameN(self.js, "UInt32Property", 0, play,12836)
                     self.Data["playtime"] = play
                     print(play)
                     break
@@ -626,7 +626,7 @@ class Persona3Save:
                         try:
                             z=int(z)
                             if z>0 and z <= 4294967295:
-                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, z,5219)
+                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, z,5223)
                                 break
                         except:
                             pass
@@ -639,7 +639,7 @@ class Persona3Save:
                         try:
                             z=int(z)
                             if z>0 and z <= 4294967295:
-                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, z,5220)
+                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, z,5224)
                                 break
                         except:
                             pass
@@ -665,7 +665,7 @@ class Persona3Save:
                         try:
                             z=int(z)
                             if z>0 and z <= 4294967295:
-                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, z,5218)
+                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, z,5222)
                                 break
                         except:
                             pass
@@ -685,7 +685,7 @@ class Persona3Save:
             elif command == "help":
                 print("")
                 print(f"back : to exit |dangerous editing\nprint : show editable value name\nedit 'value_name' : edit the value of 'value_name'\nget 'value_name' : get the value of 'value_name'")
-            self.Data["dangerous"]={"player_x":self.LoadByNameN(self.js, "UInt32Property", 0,5219),"player_y":self.LoadByNameN(self.js, "UInt32Property", 0,5220),"player_z":self.LoadByNameN(self.js, "UInt32Property", 0,5221),"player_direction":self.LoadByNameN(self.js, "UInt32Property", 0,5218)}
+            self.Data["dangerous"]={"player_x":self.LoadByNameN(self.js, "UInt32Property", 0,5223),"player_y":self.LoadByNameN(self.js, "UInt32Property", 0,5224),"player_z":self.LoadByNameN(self.js, "UInt32Property", 0,5221),"player_direction":self.LoadByNameN(self.js, "UInt32Property", 0,5222)}
     def Difficulty(self):
         difficultydata={"Beginner":2166366214,"Easy":2166374406,"Normal":2166390790,"Hard":2166423558,"Maniac":100794368}
         difficultychoose=["Beginner","Easy","Normal","Hard","Maniac"]
@@ -702,7 +702,7 @@ class Persona3Save:
                 try:
                     ss=int(ss)
                     if ss > 0 and ss <= 5:
-                        self.js=self.SaveByNameN(self.js, "UInt32Property", 0, difficultydata[difficultychoose[ss-1]],384)
+                        self.js=self.SaveByNameN(self.js, "UInt32Property", 0, difficultydata[difficultychoose[ss-1]],388)
                         break
                 except:
                     pass
@@ -750,8 +750,8 @@ class Persona3Save:
                                                             item = int(item)
                                                             if (item > 0 and item <= daydata[0][z2]):
                                                                 item=(offset+item)-1
-                                                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, item,1928)
-                                                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, item,1930)
+                                                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, item,1932)
+                                                                self.js=self.SaveByNameN(self.js, "UInt32Property", 0, item,1934)
                                                                 break
                                                         except:
                                                             pass
@@ -1023,7 +1023,7 @@ class Persona3Save:
                 new_name=input("New Money (9999999 max | put nothing to cancel): ")
                 new_name=int(new_name)
                 if new_name>=0 and new_name<=9999999:
-                    self.js=self.SaveByNameN(self.js, "UInt32Property", 0, new_name,7257)
+                    self.js=self.SaveByNameN(self.js, "UInt32Property", 0, new_name,7261)
                     self.Data["money"]=new_name
                     print(new_name)
                     break
