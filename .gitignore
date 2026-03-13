@@ -20,7 +20,21 @@
 # MCP config
 .mcp.json
 
-# Git internals (should not be in repo root)
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# sandbox
+.bash_profile
+.bashrc
+.profile
+.zprofile
+.zshrc
+.gitconfig
+.gitmodules
+.ripgreprc
+.claude/
 HEAD
 config
 hooks

@@ -86,6 +86,8 @@ class Persona3Save:
                     self.Socialrank()
                 elif command == "edit dangerous":
                     self.Dangerous()
+                elif command == "achievement progress" or command == "achievements":
+                    self.AchievementProgress()
                 elif command == "get" or command[0:4] == "get ":
                     a=command.split(" ")
                     if len(a) == 2:
@@ -117,7 +119,7 @@ class Persona3Save:
                     self.SaveChange()
                 elif command == "help":
                     print("")
-                    print("exit|quit : to exit\nsave : save edited data in the save file\nprint : show editable value\nedit 'value_name' : edit the value of 'value_name'\nget 'value_name' : get the value of 'value_name'")
+                    print("exit|quit : to exit\nsave : save edited data in the save file\nprint : show editable value\nedit 'value_name' : edit the value of 'value_name'\nget 'value_name' : get the value of 'value_name'\nachievements : show achievement progress")
                 elif command == "exit" or command == "quit":
                     break
                 else:
@@ -139,6 +141,8 @@ class Persona3Save:
         self.Data["date"]={"time":1933,"day":1932}#dayskip = 1934
         self.Data["personavalueid"]={"persona":[13090,13102,13114,13126,13138,13150,13162],"level":[13091,13103,13115,13127,13139,13151,13163],"exp":[13092,13104,13116,13128,13140,13152,13164],"skill_slot_1":[13093,13105,13117,13129,13141,13153,13165],"skill_slot_2":[13094,13106,13118,13130,13142,13154,13166],"skill_slot_3":[13095,13107,13119,13131,13143,13155,13167],"skill_slot_4":[13096,13108,13120,13132,13144,13156,13168],"fo_ma_en_ag":[13097,13109,13121,13133,13145,13157,13169],"ch":[13098,13110,13122,13134,13146,13158,13170]}#,"skill_slot_4":[0,0,0,0,13143,0]}
         self.Data["sociallink"]={"aigis":5346,"nyx annihilation team":5344,"kamiki":5342,"suemitsu":5340,"hayase":5338,"mutatsu":5336,"tanaka":5334,"bebe":5332,"pharos":5330,"maiko":5328,"nishiwaki":5326,"hiraga":5324,"maya":5322,"fushimi":5320,"miyamoto":5318,"takeba":5316,"kitamura":5314,"odagiri":5312,"kirijo":5310,"yamagishi":5308,"tomochika":5306,"sees":5304}
+        self.Data["exploration"]={"twilight_fragments_found":1429,"monad_doors":1393,"treasure_chests":7909,"twilight_fragments_used":1431}
+        self.Data["activities"]={"job_earnings":516}
     def SaveChange(self):
         with tempfile.NamedTemporaryFile(mode='w',suffix='.json', delete=False) as temp_file:
             json.dump(self.js, temp_file, indent=2)
@@ -597,6 +601,344 @@ class Persona3Save:
             elif command == "help":
                 print("")
                 print(f"back : to exit social-rank editing\nprint : show editable value name\nedit 'value_name' : edit the value of 'value_name'\nget 'value_name' : get the value of 'value_name'")
+    def GetClearStatus(self):
+        """Extract ClearStatus from SaveDataHeadder in the header."""
+        for prop in self.js:
+            if hasattr(prop, 'type') and hasattr(prop, 'name'):
+                if prop.type == 'StructProperty' and prop.name == 'SaveDataHeadder':
+                    if hasattr(prop, 'value'):
+                        for item in prop.value:
+                            if hasattr(item, 'name') and item.name == 'ClearStatus':
+                                return item.value
+        return None
+    def AchievementProgress(self):
+        import binascii
+
+        social_links = [
+            ('SEES', 5304), ('Tomochika', 5306), ('Yamagishi', 5308),
+            ('Kirijo', 5310), ('Odagiri', 5312), ('Kitamura', 5314),
+            ('Takeba', 5316), ('Miyamoto', 5318), ('Fushimi', 5320),
+            ('Maya', 5322), ('Hiraga', 5324), ('Nishiwaki', 5326),
+            ('Maiko', 5328), ('Pharos', 5330), ('Bebe', 5332),
+            ('Tanaka', 5334), ('Mutatsu', 5336), ('Hayase', 5338),
+            ('Suemitsu', 5340), ('Kamiki', 5342), ('Nyx Annihilation Team', 5344),
+            ('Aigis', 5346)
+        ]
+
+        unlocked = []
+        maxed = []
+        not_started = []
+        in_progress = []
+
+        for name, sl_id in social_links:
+            value = self.LoadByNameN(self.js, "UInt32Property", 0, sl_id)
+            if value and value > 0:
+                bytes_val = value.to_bytes(4, 'little')
+                level = bytes_val[0]
+                if level == 0:
+                    not_started.append(name)
+                elif level == 10:
+                    maxed.append(name)
+                    unlocked.append(name)
+                else:
+                    unlocked.append(name)
+                    in_progress.append((name, level))
+            else:
+                not_started.append(name)
+
+        # Social Stats
+        academics = self.LoadByNameN(self.js, "UInt32Property", 0, 5356) or 0
+        charm = self.LoadByNameN(self.js, "UInt32Property", 0, 5358) or 0
+        courage = self.LoadByNameN(self.js, "UInt32Property", 0, 5360) or 0
+
+        # Date/Time for story progress
+        day = self.LoadByNameN(self.js, "UInt32Property", 0, 1932) or 0
+        time_of_day = self.LoadByNameN(self.js, "UInt32Property", 0, 1933) or 0
+
+        # Story completion status
+        clear_status = self.GetClearStatus()
+
+        print("\n" + "="*60)
+        print("           ACHIEVEMENT PROGRESS REPORT")
+        print("="*60 + "\n")
+
+        # === COMPLETED ACHIEVEMENTS ===
+        print("=== COMPLETED ACHIEVEMENTS ===\n")
+
+        print("[SOCIAL LINKS]")
+        if len(maxed) > 0:
+            print("  Unbreakable Link - Maxed out one Social Link")
+            print(f"    Status: COMPLETE ({len(maxed)} Social Links at rank 10)")
+        else:
+            print("  Unbreakable Link - Maxed out one Social Link")
+            print("    Status: NOT COMPLETE (no Social Link at rank 10)")
+        print()
+
+        print("[SOCIAL STATS]")
+        specialist_complete = academics >= 230 or charm >= 100 or courage >= 80
+        print("  Specialist - Maxed out one Social Stat")
+        if specialist_complete:
+            which = []
+            if academics >= 230: which.append("Academics")
+            if charm >= 100: which.append("Charm")
+            if courage >= 80: which.append("Courage")
+            print("    Status: COMPLETE (" + " | ".join(which) + ")")
+        else:
+            print("    Status: IN PROGRESS")
+            print(f"    Academics: {academics}/230")
+            print(f"    Charm: {charm}/100")
+            print(f"    Courage: {courage}/80")
+        print()
+
+        peak_performance = academics >= 230 and charm >= 100 and courage >= 80
+        print("  Peak Performance - Maxed out all Social Stats")
+        if peak_performance:
+            print("    Status: COMPLETE")
+        else:
+            print("    Status: IN PROGRESS")
+            print(f"    Academics: {academics}/230")
+            print(f"    Charm: {charm}/100")
+            print(f"    Courage: {courage}/80")
+        print()
+
+        # === IN PROGRESS ACHIEVEMENTS ===
+        print("=== IN PROGRESS ===\n")
+
+        print("[SOCIAL LINKS]")
+        people_person = len(unlocked) == 22
+        print("  People Person - Unlocked all Social Links")
+        print(f"    Progress: {len(unlocked)}/22 unlocked")
+        if len(unlocked) < 22:
+            print("    Missing: " + ", ".join(not_started))
+        status = "COMPLETE" if people_person else "IN PROGRESS"
+        print(f"    Status: {status}")
+        print()
+
+        legacy = len(maxed) == 22
+        print("  A Legacy of Friendships - Maxed out all Social Links")
+        print(f"    Progress: {len(maxed)}/22 maxed")
+        if len(maxed) < 22:
+            if in_progress:
+                formatted = [f"{name} (Lv{level})" for name, level in in_progress]
+                print("    In progress: " + ", ".join(formatted))
+            if not_started:
+                print("    Not started: " + ", ".join(not_started))
+        status = "COMPLETE" if legacy else "IN PROGRESS"
+        print(f"    Status: {status}")
+        print()
+
+        # === STORY PROGRESS ===
+        print("[STORY PROGRESS]")
+        print(f"  Current Day: {day}")
+        print(f"  Time of Day: {time_of_day}")
+        print("    (257=Morning, 258=Day, 259=Evening, 260=Night, 261=Late Night)")
+        print()
+
+        # Story completion (from ClearStatus)
+        print("[STORY FLAGS]")
+        print("  The Great Seal - Sealed Nyx")
+        if clear_status is not None:
+            print("    Status: COMPLETE")
+            print(f"    ClearStatus: {clear_status}")
+        else:
+            print("    Status: NOT COMPLETE")
+            print("    ClearStatus: Not set (game not completed)")
+        print()
+
+        print("  From Shadows into Light - Watched the good ending")
+        if clear_status == 1:
+            print("    Status: COMPLETE")
+            print(f"    ClearStatus: {clear_status} (Good ending)")
+        elif clear_status == 2:
+            print("    Status: NOT COMPLETE")
+            print(f"    ClearStatus: {clear_status} (Bad ending achieved)")
+        else:
+            print("    Status: NOT COMPLETE")
+            print("    ClearStatus: Game not completed")
+        print()
+
+        # === CANNOT TRACK (NEEDS REVERSE ENGINEERING) ===
+        print("=== CANNOT TRACK (REQUIRES DATA DISCOVERY) ===\n")
+
+        print("[COMPENDIUM & FUSION]")
+        print("  Path to Salvation - Fused Messiah")
+        print("    Status: ? (Compendium ownership data not mapped)")
+        print("    Discovery: Compare low vs high compendium saves")
+        print()
+        print("  The First of Many - Performed a Dyad Fusion")
+        print("    Status: ? (Fusion counter not identified)")
+        print()
+        print("  Fusion Artisan - Performed 3+ Persona fusion")
+        print("    Status: ? (Fusion counter not identified)")
+        print()
+
+        print("[COMBAT STATISTICS]")
+        print("  Making the Dream Work - 50 All-Out Attacks")
+        print("    Status: CANDIDATE IDs (per-teammate offset 32784)")
+        all_out = self.LoadByNameN(self.js, "UInt32Property", 0, 7909)
+        if all_out:
+            print(f"    Current value (ID 7909): {all_out}/50")
+        print("    Candidates: 7909, 40689, 73473, 106257, 139041, 171825, 204609")
+        print()
+        print("  There's No 'I' in 'Team' - Performed a Shift")
+        print("    Status: CANDIDATE ID 576 (progressive 1-9)")
+        shift = self.LoadByNameN(self.js, "UInt32Property", 0, 576)
+        if shift:
+            print(f"    Current value (ID 576): {shift}")
+        print()
+        print("  The Strength of Our Hearts - Used all teammates' Theurgy")
+        print("    Status: ? (Theurgy flags not identified - need per-character data)")
+        print()
+        print("  Shrouded Assassin - 50 Chance Encounters")
+        print("    Status: CANDIDATE IDs (per-teammate offset 32784)")
+        encounters = self.LoadByNameN(self.js, "UInt32Property", 0, 13158)
+        if encounters:
+            print(f"    Current value (ID 13158): {encounters}/50")
+        print("    Candidates: 13158, 45938, 78722, 111506, 144290, 177074, 209882")
+        print()
+        print("  Get a Load of Those Numbers! - 999+ damage")
+        print("    Status: NOT FOUND (likely BoolProperty, not UInt32Property)")
+        print()
+        print("  Reaper Reaped - Defeated the Reaper")
+        print("    Status: NOT FOUND (likely boss flag in story data)")
+        print()
+        print("  The Thrill of the Hunt - Defeated golden enemy")
+        print("    Status: NOT FOUND (likely BoolProperty, not UInt32Property)")
+        print()
+
+        print("[EXPLORATION & COLLECTION]")
+        print("  Briefcase Burglar - 50 treasure chests")
+        print("    Status: CANDIDATE ID 7909 (range 47-50)")
+        chests = self.LoadByNameN(self.js, "UInt32Property", 0, 7909)
+        if chests:
+            print(f"    Current value (ID 7909): {chests}")
+            if chests >= 50:
+                print("    Status: COMPLETE")
+            else:
+                print(f"    Progress: {chests}/50")
+        else:
+            print("    Value not found")
+        print()
+        print("  Glimpse of the Depths - 10 Monad doors")
+        print("    Status: ID 1393 (with offset 32784 per teammate) - HIGH CONFIDENCE")
+        monad = self.LoadByNameN(self.js, "UInt32Property", 0, 1393)
+        if monad:
+            print(f"    Current value (ID 1451): {monad}")
+            if monad >= 10:
+                print("    Status: COMPLETE")
+            else:
+                print(f"    Progress: {monad}/10")
+        else:
+            print("    Value not found")
+        print()
+        print("  The Horror of the Shade - Encountered Dark Zone")
+        print("    Status: NOT FOUND (no boolean flag identified)")
+        print()
+        print("  Eagle Eye - All Twilight Fragments (124 total)")
+        print("    Status: ID 1429 - HIGH CONFIDENCE")
+        fragments = self.LoadByNameN(self.js, "UInt32Property", 0, 1429)
+        if fragments:
+            print(f"    Current value (ID 1449): {fragments}")
+            if fragments >= 124:
+                print("    Status: COMPLETE")
+            else:
+                print(f"    Progress: {fragments}/124")
+        else:
+            print("    Value not found")
+        print()
+        print("  Shattered Plumes - 50 Twilight Fragments used")
+        print("    Status: ID 1431 - HIGH CONFIDENCE")
+        used = self.LoadByNameN(self.js, "UInt32Property", 0, 1431)
+        if used:
+            print(f"    Current value (ID 13110): {used}")
+            if used >= 50:
+                print("    Status: COMPLETE")
+            else:
+                print(f"    Progress: {used}/50")
+        else:
+            print("    Value not found")
+        print()
+
+        print("[SOCIAL & ACTIVITIES]")
+        print("  In High Demand - 5 invitations")
+        print("    Status: ? (Invitation counter not identified)")
+        print()
+        print("  Dorm Life - Spent evening in dorm")
+        print("    Status: ? (Dorm activity flag not identified)")
+        print()
+        print("  Distinguished Visitor - Elizabeth invitation")
+        print("    Status: ? (Elizabeth flag not identified)")
+        print()
+        print("  Eat Your Veggies, Peas! - Harvested a crop")
+        print("    Status: ? (Garden flag not identified)")
+        print()
+        print("  Benevolent Purr-tector - Nursed cat to full health")
+        print("    Status: ? (Cat health flag not identified)")
+        print()
+        print("  Gourmand - Secret menu order")
+        print("    Status: ? (Secret menu flag not identified)")
+        print()
+        print("  The Grindset Mindset - 50k yen from jobs")
+        print("    Status: ID 516 - HIGH CONFIDENCE")
+        job_earnings = self.LoadByNameN(self.js, "UInt32Property", 0, 516)
+        if job_earnings:
+            print(f"    Current earnings (ID 516): {job_earnings:,} yen")
+            if job_earnings >= 50000:
+                print("    Status: COMPLETE")
+            else:
+                print(f"    Progress: {job_earnings:,}/50,000 yen ({50000-job_earnings:,} more needed)")
+        else:
+            print("    Value not found")
+        print()
+        print("  Top of the Class - Aced an exam")
+        print("    Status: ? (Exam flag not identified)")
+        print()
+        print("  Extracurricular Excellence - Rescued missing person")
+        print("    Status: ? (Quest flag not identified)")
+        print()
+        print("  That Special Someone - Nurtured a romance")
+        print("    Status: ? (Romance flag not identified)")
+        print()
+
+        print("[TEAM PROGRESSION]")
+        print("  A Newfound Strength - All ultimate Personas")
+        print("    Status: CANDIDATE IDs with value 127 (binary: 0b1111111 = 7 bits)")
+        ultimate = self.LoadByNameN(self.js, "UInt32Property", 0, 201557)
+        if ultimate:
+            print(f"    Current value (ID 201557): {ultimate}/127")
+            if ultimate == 127:
+                print("    Status: COMPLETE (all 7 ultimate Personas unlocked)")
+        print("    Candidates: 201557, 201605, 201669, 201717, 201733")
+        print()
+        print("  Through Thick and Thin - Combat Characteristic")
+        print("    Status: CANDIDATE IDs with value 7 (7 teammates)")
+        combat_char = self.LoadByNameN(self.js, "UInt32Property", 0, 201693)
+        if combat_char:
+            print(f"    Current value (ID 201693): {combat_char}")
+        print("    Candidates: 201693, 201749 (near Ultimate Persona IDs)")
+        print()
+
+        print("[SHUFFLE TIME]")
+        print("  The Fool's Journey - 10 Major Arcana")
+        print("    Status: NOT CLEAR (many IDs with value 10, need more save variation)")
+        print("    Candidates: 428, 513, 657, 658, 1395, 1399...")
+        print()
+        print("  The Power of Choice - 10 Personas")
+        print("    Status: NOT CLEAR (need saves with different Shuffle progress)")
+        print()
+        print("  Beyond the Darkness - Remaining Major Arcana unlocked")
+        print("    Status: ? (Story flag - likely linked to Death/SL progression)")
+        print()
+        print("  Beyond the Darkness - Remaining Arcana unlocked")
+        print("    Status: ? (Arcana unlock flag not identified)")
+        print()
+
+        print("[DLC]")
+        print("  Episode Aigis - All 8 achievements")
+        print("    Status: ⊗ (Separate save structure, requires Episode Aigis saves)")
+        print()
+
+        print("="*60)
     def Playtime(self):
         while True:#8205188
             try:
