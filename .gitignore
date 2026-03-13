@@ -40,3 +40,6 @@ config
 hooks
 objects
 refs
+
+# User save data
+data/
