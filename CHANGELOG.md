@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-03-14
+
+### Fixed
+- Achievement classification uses computed completion status instead of hardcoded arrays
+- Progress values capped to max (Eagle Eye no longer shows 150/124)
+
+### Changed
+- Moved Shrouded Assassin and Making the Dream Work to "cannot track" due to unreliable data IDs
+- Disabled achievements tab behind feature flag until more achievements are supported
+- Removed unused AllOutAttackBase, AllOutAttackOffset, and ChanceEncounters data IDs
+
+### Added
+- Feature flags config (`lib/config/features.ts`)
+- Export warning modal on download with disclaimer
+
 ## [1.0.2] - 2026-03-14
 
 ### Added
