@@ -2,6 +2,5 @@ node_modules/
 .DS_Store/
 build/
 .svelte-kit/
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
