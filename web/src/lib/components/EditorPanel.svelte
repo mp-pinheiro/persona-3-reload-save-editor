@@ -9,16 +9,19 @@
 	import ExportButton from './ExportButton.svelte';
 	import DifficultyEditor from './DifficultyEditor.svelte';
 	import DateTimeEditor from './DateTimeEditor.svelte';
+	import { FEATURES } from '$lib/config/features.js';
 
 	let activeTab = $uiState.activeTab;
 
-	const tabs = [
+	const allTabs = [
 		{ id: 'summary' as const, label: 'Summary' },
 		{ id: 'stats' as const, label: 'Social Stats' },
 		{ id: 'social-links' as const, label: 'Social Links' },
-		{ id: 'achievements' as const, label: 'Achievements' },
+		{ id: 'achievements' as const, label: 'Achievements', feature: 'achievements' as const },
 		{ id: 'story' as const, label: 'Story Flags' }
 	];
+
+	const tabs = allTabs.filter((t) => !t.feature || FEATURES[t.feature]);
 
 	function switchTab(tabId: (typeof tabs)[number]['id']) {
 		setTab(tabId);
