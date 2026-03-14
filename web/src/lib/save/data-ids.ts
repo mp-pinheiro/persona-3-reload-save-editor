@@ -38,7 +38,6 @@ export const SOCIAL_STAT_THRESHOLD = {
 export const DATA_IDS = {
 	Money: 7261,
 	Playtime: 12836,
-	Difficulty: 388,
 	DayCounter: 1932,
 	TimeOfDay: 1933,
 	DaySkipFlag: 1934,
@@ -53,12 +52,12 @@ export const DATA_IDS = {
 	AllOutAttackOffset: 32784
 };
 
-export const DIFFICULTY_VALUES: Record<number, string> = {
-	2166366214: 'Peaceful',
-	2166374406: 'Easy',
-	2166390790: 'Normal',
-	2166423558: 'Hard',
-	100794368: 'Merciless'
+export const DIFFICULTY_NAMES: Record<number, string> = {
+	0: 'Peaceful',
+	1: 'Easy',
+	2: 'Normal',
+	3: 'Hard',
+	4: 'Merciless'
 };
 
 export const TIME_OF_DAY_NAMES: Record<number, string> = {

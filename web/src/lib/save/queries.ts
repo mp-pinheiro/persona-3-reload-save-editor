@@ -1,6 +1,6 @@
 import { PropertyType } from '../gvas/types.js';
 import type { GVASData, UInt32PropertyData, IntPropertyData, StrPropertyData } from '../gvas/types.js';
-import { DATA_IDS, DIFFICULTY_VALUES, TIME_OF_DAY_NAMES } from './data-ids.js';
+import { DATA_IDS, DIFFICULTY_NAMES, TIME_OF_DAY_NAMES } from './data-ids.js';
 import type { SaveSummary } from './structures.js';
 
 function uint32ToBytes(value: number): Uint8Array {
@@ -118,13 +118,12 @@ export function getSaveSummary(properties: GVASData[]): SaveSummary {
 		}
 	}
 
-	const difficultyVal = findByIdUInt32(properties, DATA_IDS.Difficulty);
-	if (difficultyVal !== undefined) {
-		summary.difficulty = DIFFICULTY_VALUES[difficultyVal] || `Unknown (${difficultyVal})`;
-	}
-
 	const headerStruct = findStructProperty(properties, 'SaveDataHeadder');
 	if (headerStruct) {
+		const diffProp = findInStruct(headerStruct, PropertyType.UInt16Property, 'Difficulty');
+		const diffVal = diffProp ? (diffProp as any).value as number : 0;
+		summary.difficulty = DIFFICULTY_NAMES[diffVal] || `Unknown (${diffVal})`;
+
 		const nameChars: number[] = [];
 		for (const child of headerStruct) {
 			if ((child as any).type === PropertyType.Int8Property && (child as any).name === 'FirstName') {
@@ -210,12 +209,21 @@ export function updateIntById(
 	return false;
 }
 
-export function getDifficulty(properties: GVASData[]): number | undefined {
-	return findByIdUInt32(properties, DATA_IDS.Difficulty);
+export function getDifficulty(properties: GVASData[]): number {
+	const headerStruct = findStructProperty(properties, 'SaveDataHeadder');
+	if (!headerStruct) return 0;
+	const diffProp = findInStruct(headerStruct, PropertyType.UInt16Property, 'Difficulty');
+	if (!diffProp) return 0;
+	return (diffProp as any).value as number;
 }
 
-export function updateDifficulty(properties: GVASData[], encodedValue: number): boolean {
-	return updateUInt32Property(properties, DATA_IDS.Difficulty, encodedValue);
+export function updateDifficulty(properties: GVASData[], newValue: number): boolean {
+	const headerStruct = findStructProperty(properties, 'SaveDataHeadder');
+	if (!headerStruct) return false;
+	const diffProp = findInStruct(headerStruct, PropertyType.UInt16Property, 'Difficulty');
+	if (!diffProp) return false;
+	(diffProp as any).value = newValue;
+	return true;
 }
 
 export function getStrProperty(properties: GVASData[], name: string): string | undefined {

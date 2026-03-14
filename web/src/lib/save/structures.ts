@@ -1,4 +1,4 @@
-import { SOCIAL_LINK_IDS, SOCIAL_STAT_THRESHOLD, DIFFICULTY_VALUES, TIME_OF_DAY_NAMES } from './data-ids.js';
+import { SOCIAL_STAT_THRESHOLD } from './data-ids.js';
 
 export interface SocialLink {
 	id: number;
