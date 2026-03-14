@@ -41,12 +41,11 @@
 
 	<footer>
 		<p class="subtitle">
-			Based on
 			<a
-				href="https://github.com/afkaf/Python-GVAS-JSON-Converter"
+				href="https://github.com/mp-pinheiro/persona-3-reload-save-editor"
 				target="_blank"
 				rel="noopener"
-				>Python-GVAS-JSON-Converter</a
+				>Credits & Licenses</a
 			>
 		</p>
 	</footer>

@@ -98,6 +98,7 @@ h3 {
 }
 
 .upload-zone {
+	display: block;
 	border: 2px dashed var(--border-light);
 	border-radius: 0.75rem;
 	padding: 3rem 2rem;
@@ -326,10 +327,11 @@ h3 {
 }
 
 .slider-value {
-	min-width: 3rem;
+	min-width: 10rem;
 	text-align: right;
 	font-size: 0.875rem;
 	color: var(--text-secondary);
+	white-space: nowrap;
 }
 
 .grid {

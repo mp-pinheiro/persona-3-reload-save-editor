@@ -1,7 +1,19 @@
 <script lang="ts">
 	import { saveStore } from '$lib/ui/stores.js';
 	import { findByIdUInt32, updateUInt32Property } from '$lib/save/queries.js';
-	import { SOCIAL_STAT_MAX } from '$lib/save/data-ids.js';
+	import { SOCIAL_STAT_THRESHOLD, SOCIAL_STAT_TIERS } from '$lib/save/data-ids.js';
+
+	const STAT_MAX = 999;
+
+	function getTierName(stat: string, value: number): string {
+		const tiers = SOCIAL_STAT_TIERS[stat];
+		if (!tiers) return '';
+		let name = tiers[0].name;
+		for (const tier of tiers) {
+			if (value >= tier.min) name = tier.name;
+		}
+		return name;
+	}
 
 	let academics = 0;
 	let charm = 0;
@@ -15,28 +27,26 @@
 
 	function setMax(stat: 'academics' | 'charm' | 'courage') {
 		if (stat === 'academics') {
-			academics = SOCIAL_STAT_MAX.Academics;
-			updateUInt32Property($saveStore.properties, 5356, SOCIAL_STAT_MAX.Academics);
+			academics = SOCIAL_STAT_THRESHOLD.Academics;
+			updateUInt32Property($saveStore.properties, 5356, SOCIAL_STAT_THRESHOLD.Academics);
 		} else if (stat === 'charm') {
-			charm = SOCIAL_STAT_MAX.Charm;
-			updateUInt32Property($saveStore.properties, 5358, SOCIAL_STAT_MAX.Charm);
+			charm = SOCIAL_STAT_THRESHOLD.Charm;
+			updateUInt32Property($saveStore.properties, 5358, SOCIAL_STAT_THRESHOLD.Charm);
 		} else {
-			courage = SOCIAL_STAT_MAX.Courage;
-			updateUInt32Property($saveStore.properties, 5360, SOCIAL_STAT_MAX.Courage);
+			courage = SOCIAL_STAT_THRESHOLD.Courage;
+			updateUInt32Property($saveStore.properties, 5360, SOCIAL_STAT_THRESHOLD.Courage);
 		}
 	}
 
 	function updateStat(stat: 'academics' | 'charm' | 'courage', value: number) {
+		const clamped = Math.max(0, Math.min(STAT_MAX, Math.floor(value)));
 		if (stat === 'academics') {
-			const clamped = Math.max(0, Math.min(SOCIAL_STAT_MAX.Academics, Math.floor(value)));
 			academics = clamped;
 			updateUInt32Property($saveStore.properties, 5356, clamped);
 		} else if (stat === 'charm') {
-			const clamped = Math.max(0, Math.min(SOCIAL_STAT_MAX.Charm, Math.floor(value)));
 			charm = clamped;
 			updateUInt32Property($saveStore.properties, 5358, clamped);
 		} else {
-			const clamped = Math.max(0, Math.min(SOCIAL_STAT_MAX.Courage, Math.floor(value)));
 			courage = clamped;
 			updateUInt32Property($saveStore.properties, 5360, clamped);
 		}
@@ -49,17 +59,24 @@
 			<label class="form-label" for="academics-slider">Academics</label>
 			<button class="max-btn" onclick={() => setMax('academics')}>Max</button>
 		</div>
-		<div class="slider-container">
-			<input
-				id="academics-slider"
-				type="range"
-				min="0"
-				max={SOCIAL_STAT_MAX.Academics}
-				bind:value={academics}
-				onchange={(e) => updateStat('academics', Number((e.target as HTMLInputElement).value))}
-				class="slider"
-			/>
-			<span class="slider-value">{academics}/230</span>
+		<div class="slider-with-ticks">
+			<div class="slider-container">
+				<input
+					id="academics-slider"
+					type="range"
+					min="0"
+					max={STAT_MAX}
+					bind:value={academics}
+					onchange={(e) => updateStat('academics', Number((e.target as HTMLInputElement).value))}
+					class="slider"
+				/>
+				<span class="slider-value">{academics}/{STAT_MAX} ({getTierName('Academics', academics)})</span>
+			</div>
+			<div class="tick-marks">
+				{#each SOCIAL_STAT_TIERS['Academics'].slice(1) as tier}
+					<div class="tick-mark" style="left: {(tier.min / STAT_MAX) * 100}%" title="{tier.name} ({tier.min})"></div>
+				{/each}
+			</div>
 		</div>
 	</div>
 
@@ -68,17 +85,24 @@
 			<label class="form-label" for="charm-slider">Charm</label>
 			<button class="max-btn" onclick={() => setMax('charm')}>Max</button>
 		</div>
-		<div class="slider-container">
-			<input
-				id="charm-slider"
-				type="range"
-				min="0"
-				max={SOCIAL_STAT_MAX.Charm}
-				bind:value={charm}
-				onchange={(e) => updateStat('charm', Number((e.target as HTMLInputElement).value))}
-				class="slider"
-			/>
-			<span class="slider-value">{charm}/100</span>
+		<div class="slider-with-ticks">
+			<div class="slider-container">
+				<input
+					id="charm-slider"
+					type="range"
+					min="0"
+					max={STAT_MAX}
+					bind:value={charm}
+					onchange={(e) => updateStat('charm', Number((e.target as HTMLInputElement).value))}
+					class="slider"
+				/>
+				<span class="slider-value">{charm}/{STAT_MAX} ({getTierName('Charm', charm)})</span>
+			</div>
+			<div class="tick-marks">
+				{#each SOCIAL_STAT_TIERS['Charm'].slice(1) as tier}
+					<div class="tick-mark" style="left: {(tier.min / STAT_MAX) * 100}%" title="{tier.name} ({tier.min})"></div>
+				{/each}
+			</div>
 		</div>
 	</div>
 
@@ -87,17 +111,24 @@
 			<label class="form-label" for="courage-slider">Courage</label>
 			<button class="max-btn" onclick={() => setMax('courage')}>Max</button>
 		</div>
-		<div class="slider-container">
-			<input
-				id="courage-slider"
-				type="range"
-				min="0"
-				max={SOCIAL_STAT_MAX.Courage}
-				bind:value={courage}
-				onchange={(e) => updateStat('courage', Number((e.target as HTMLInputElement).value))}
-				class="slider"
-			/>
-			<span class="slider-value">{courage}/80</span>
+		<div class="slider-with-ticks">
+			<div class="slider-container">
+				<input
+					id="courage-slider"
+					type="range"
+					min="0"
+					max={STAT_MAX}
+					bind:value={courage}
+					onchange={(e) => updateStat('courage', Number((e.target as HTMLInputElement).value))}
+					class="slider"
+				/>
+				<span class="slider-value">{courage}/{STAT_MAX} ({getTierName('Courage', courage)})</span>
+			</div>
+			<div class="tick-marks">
+				{#each SOCIAL_STAT_TIERS['Courage'].slice(1) as tier}
+					<div class="tick-mark" style="left: {(tier.min / STAT_MAX) * 100}%" title="{tier.name} ({tier.min})"></div>
+				{/each}
+			</div>
 		</div>
 	</div>
 </div>
@@ -114,5 +145,25 @@
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 0.5rem;
+	}
+
+	.slider-with-ticks {
+		position: relative;
+	}
+
+	.tick-marks {
+		position: relative;
+		height: 0.5rem;
+		margin-top: 0.125rem;
+		margin-right: calc(10rem + 1rem);
+	}
+
+	.tick-mark {
+		position: absolute;
+		top: 0;
+		width: 2px;
+		height: 100%;
+		background: var(--text-muted);
+		opacity: 0.4;
 	}
 </style>

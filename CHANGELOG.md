@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-03-14
+
+### Fixed
+- Playtime displays correctly by converting 30fps frame counts to hours/minutes
+- Difficulty labels use P3R names (Peaceful/Merciless instead of Beginner/Maniac)
+- Difficulty now reads from UInt32Property data ID 388 instead of header UInt16
+- Time of day values mapped to all nine in-game periods
+
+### Added
+- Social stat tier indicators (Slacker through Genius, etc.) on summary and editor
+- Tier threshold markers on stat progress bars and sliders
+- Social stat sliders allow values up to 999 (beyond max tier threshold)
+
+### Changed
+- Renamed `playtimeSeconds` to `playtimeFrames` in SaveSummary interface
+- Renamed `SOCIAL_STAT_MAX` to `SOCIAL_STAT_THRESHOLD` for clarity
+- Footer link points to project repository instead of upstream converter
+
 ## [1.0.0] - 2026-03-14
 
 ### Added

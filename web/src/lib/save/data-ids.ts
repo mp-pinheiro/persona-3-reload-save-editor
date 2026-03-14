@@ -29,7 +29,7 @@ export const SOCIAL_STAT_IDS = {
 	Courage: 5360
 };
 
-export const SOCIAL_STAT_MAX = {
+export const SOCIAL_STAT_THRESHOLD = {
 	Academics: 230,
 	Charm: 100,
 	Courage: 80
@@ -53,23 +53,51 @@ export const DATA_IDS = {
 	AllOutAttackOffset: 32784
 };
 
-export const DIFFICULTY_NAMES = [
-	'Peaceful',
-	'Beginner',
-	'Safe',
-	'Easy',
-	'Normal',
-	'Hard',
-	'Very Hard',
-	'Merciless'
-];
+export const DIFFICULTY_VALUES: Record<number, string> = {
+	2166366214: 'Peaceful',
+	2166374406: 'Easy',
+	2166390790: 'Normal',
+	2166423558: 'Hard',
+	100794368: 'Merciless'
+};
 
 export const TIME_OF_DAY_NAMES: Record<number, string> = {
-	257: 'Morning',
-	258: 'Day',
-	259: 'Evening',
-	260: 'Night',
-	261: 'Late Night'
+	257: 'Very Early Morning',
+	258: 'Early Morning',
+	259: 'Morning',
+	260: 'Lunch Break',
+	261: 'Afternoon',
+	262: 'After School',
+	263: 'Evening',
+	264: 'Dark Hour',
+	265: 'Late Evening'
+};
+
+export const SOCIAL_STAT_TIERS: Record<string, { name: string; min: number }[]> = {
+	Academics: [
+		{ name: 'Slacker', min: 0 },
+		{ name: 'Average', min: 20 },
+		{ name: 'Above Average', min: 55 },
+		{ name: 'Smart', min: 100 },
+		{ name: 'Intelligent', min: 155 },
+		{ name: 'Genius', min: 230 }
+	],
+	Charm: [
+		{ name: 'Plain', min: 0 },
+		{ name: 'Unpolished', min: 15 },
+		{ name: 'Confident', min: 30 },
+		{ name: 'Smooth', min: 45 },
+		{ name: 'Popular', min: 70 },
+		{ name: 'Charismatic', min: 100 }
+	],
+	Courage: [
+		{ name: 'Timid', min: 0 },
+		{ name: 'Ordinary', min: 15 },
+		{ name: 'Determined', min: 30 },
+		{ name: 'Tough', min: 45 },
+		{ name: 'Fearless', min: 60 },
+		{ name: 'Badass', min: 80 }
+	]
 };
 
 export const ALL_OUT_ATTACK_IDS = [

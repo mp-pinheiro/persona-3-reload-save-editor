@@ -1,21 +1,26 @@
 <script lang="ts">
 	import { saveStore } from '$lib/ui/stores.js';
 	import { getDifficulty, updateDifficulty } from '$lib/save/queries.js';
-	import { DIFFICULTY_NAMES } from '$lib/save/data-ids.js';
+	import { DIFFICULTY_VALUES } from '$lib/save/data-ids.js';
 
-	let selectedDifficulty = $state(4);
+	const difficultyEntries = Object.entries(DIFFICULTY_VALUES).map(([val, name]) => ({
+		encodedValue: Number(val),
+		name
+	}));
 
-	let currentDifficulty = $derived(getDifficulty($saveStore.properties));
+	let selectedEncoded = $state(2166390790);
+
+	let currentEncoded = $derived(getDifficulty($saveStore.properties));
 
 	$effect(() => {
-		if (currentDifficulty !== undefined) {
-			selectedDifficulty = currentDifficulty;
+		if (currentEncoded !== undefined) {
+			selectedEncoded = currentEncoded;
 		}
 	});
 
-	function handleChange(value: number) {
-		selectedDifficulty = value;
-		updateDifficulty($saveStore.properties, value);
+	function handleChange(encodedValue: number) {
+		selectedEncoded = encodedValue;
+		updateDifficulty($saveStore.properties, encodedValue);
 	}
 </script>
 
@@ -24,17 +29,17 @@
 	<select
 		id="difficulty-select"
 		class="form-input"
-		bind:value={selectedDifficulty}
+		value={selectedEncoded}
 		onchange={(e) => handleChange(Number((e.target as HTMLSelectElement).value))}
 	>
-		{#each DIFFICULTY_NAMES as name, i}
-			<option value={i}>{name}</option>
+		{#each difficultyEntries as { encodedValue, name }}
+			<option value={encodedValue}>{name}</option>
 		{/each}
 	</select>
-	{#if currentDifficulty === undefined}
-		<p class="form-hint warning">Difficulty not found in this save file.</p>
+	{#if currentEncoded === undefined}
+		<p class="form-hint warning">Difficulty not set in this save. Select a value to set it.</p>
 	{:else}
-		<p class="form-hint">Current: {DIFFICULTY_NAMES[selectedDifficulty] || 'Unknown'}</p>
+		<p class="form-hint">Current: {DIFFICULTY_VALUES[selectedEncoded] || 'Unknown'}</p>
 	{/if}
 </div>
 

@@ -1,4 +1,4 @@
-import { SOCIAL_LINK_IDS, SOCIAL_STAT_MAX, DIFFICULTY_NAMES, TIME_OF_DAY_NAMES } from './data-ids.js';
+import { SOCIAL_LINK_IDS, SOCIAL_STAT_THRESHOLD, DIFFICULTY_VALUES, TIME_OF_DAY_NAMES } from './data-ids.js';
 
 export interface SocialLink {
 	id: number;
@@ -10,12 +10,12 @@ export interface SocialStat {
 	id: number;
 	name: string;
 	value: number;
-	max: number;
+	threshold: number;
 }
 
 export interface SaveSummary {
 	characterName?: string;
-	playtimeSeconds?: number;
+	playtimeFrames?: number;
 	day?: number;
 	timeOfDay?: string;
 	difficulty?: string;
@@ -62,7 +62,7 @@ export const SOCIAL_LINK_DEFINITIONS: { name: string; id: number }[] = [
 ];
 
 export const SOCIAL_STAT_DEFINITIONS = [
-	{ name: 'Academics', id: 5356, max: SOCIAL_STAT_MAX.Academics },
-	{ name: 'Charm', id: 5358, max: SOCIAL_STAT_MAX.Charm },
-	{ name: 'Courage', id: 5360, max: SOCIAL_STAT_MAX.Courage }
+	{ name: 'Academics', id: 5356, threshold: SOCIAL_STAT_THRESHOLD.Academics },
+	{ name: 'Charm', id: 5358, threshold: SOCIAL_STAT_THRESHOLD.Charm },
+	{ name: 'Courage', id: 5360, threshold: SOCIAL_STAT_THRESHOLD.Courage }
 ];
