@@ -102,3 +102,34 @@ export const SOCIAL_STAT_TIERS: Record<string, { name: string; min: number }[]> 
 export const ALL_OUT_ATTACK_IDS = [
 	7909, 40689, 73473, 106257, 139041, 171825, 204609
 ];
+
+const MONTH_DAYS = [30, 31, 30, 31, 31, 30, 31, 30, 31, 31, 28, 4];
+const MONTH_NAMES = [
+	'April', 'May', 'June', 'July', 'August', 'September',
+	'October', 'November', 'December', 'January', 'February', 'March'
+];
+const MONTH_NUMBERS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
+const MONTH_YEARS = [2009, 2009, 2009, 2009, 2009, 2009, 2009, 2009, 2009, 2010, 2010, 2010];
+
+export function dayCounterToCalendarDate(counter: number): { month: string; day: number; monthNum: number; year: number } | null {
+	if (counter < 0 || counter > 337) return null;
+	let remaining = counter;
+	for (let i = 0; i < MONTH_DAYS.length; i++) {
+		if (remaining < MONTH_DAYS[i]) {
+			return {
+				month: MONTH_NAMES[i],
+				day: remaining + 1,
+				monthNum: MONTH_NUMBERS[i],
+				year: MONTH_YEARS[i]
+			};
+		}
+		remaining -= MONTH_DAYS[i];
+	}
+	return null;
+}
+
+export function formatCalendarDate(counter: number): string | null {
+	const date = dayCounterToCalendarDate(counter);
+	if (!date) return null;
+	return `(${date.year}-${String(date.monthNum).padStart(2, '0')}-${String(date.day).padStart(2, '0')})`;
+}

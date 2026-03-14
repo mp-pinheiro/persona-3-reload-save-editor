@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-03-14
+
+### Added
+- Day counter shows mapped calendar date (April 2009 - March 2010)
+- SummaryCard displays date alongside day number (e.g. "305 - (2010-01-31)")
+- DateTimeEditor hint shows full calendar date (e.g. "January 31, 2010")
+
+### Removed
+- Redundant "Current:" hints from Money, Difficulty, and Time of Day editors
+
 ## [1.0.1] - 2026-03-14
 
 ### Fixed

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { saveStore } from '$lib/ui/stores.js';
 	import { getSaveSummary } from '$lib/save/queries.js';
-	import { SOCIAL_STAT_TIERS, SOCIAL_STAT_THRESHOLD } from '$lib/save/data-ids.js';
+	import { SOCIAL_STAT_TIERS, SOCIAL_STAT_THRESHOLD, formatCalendarDate } from '$lib/save/data-ids.js';
 
 	$: summary = $saveStore.summary ? getSaveSummary($saveStore.properties) : null;
 
@@ -39,7 +39,7 @@
 			</div>
 			<div class="summary-item">
 				<div class="summary-label">Day</div>
-				<div class="summary-value">{summary.day || 'Unknown'}</div>
+				<div class="summary-value">{summary.day ? `${summary.day} - ${formatCalendarDate(summary.day) || '??/??'}` : 'Unknown'}</div>
 			</div>
 			<div class="summary-item">
 				<div class="summary-label">Time of Day</div>

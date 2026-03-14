@@ -34,5 +34,4 @@
 			<option value={index}>{name}</option>
 		{/each}
 	</select>
-	<p class="form-hint">Current: {DIFFICULTY_NAMES[selectedIndex] || 'Unknown'}</p>
 </div>

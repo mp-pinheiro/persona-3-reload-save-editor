@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { saveStore } from '$lib/ui/stores.js';
 	import { findByIdUInt32, updateUInt32Property } from '$lib/save/queries.js';
-	import { DATA_IDS, TIME_OF_DAY_NAMES } from '$lib/save/data-ids.js';
+	import { DATA_IDS, TIME_OF_DAY_NAMES, dayCounterToCalendarDate } from '$lib/save/data-ids.js';
 
 	let dayValue = $state(1);
 	let timeOfDayValue = $state(257);
@@ -28,6 +28,12 @@
 		updateUInt32Property($saveStore.properties, DATA_IDS.TimeOfDay, value);
 	}
 
+	let calendarDate = $derived.by(() => {
+		const date = dayCounterToCalendarDate(dayValue);
+		if (!date) return 'Unknown date';
+		return `${date.month} ${date.day}, ${date.year}`;
+	});
+
 	const timeOptions = Object.entries(TIME_OF_DAY_NAMES).map(([val, name]) => ({
 		value: Number(val),
 		label: name
@@ -46,7 +52,7 @@
 			bind:value={dayValue}
 			onchange={(e) => updateDay(Number((e.target as HTMLInputElement).value))}
 		/>
-		<p class="form-hint">Current day in the game calendar.</p>
+		<p class="form-hint">{calendarDate}</p>
 	</div>
 
 	<div class="form-group">
@@ -62,9 +68,7 @@
 			{/each}
 		</select>
 		{#if currentTime !== undefined && !TIME_OF_DAY_NAMES[timeOfDayValue]}
-			<p class="form-hint warning">Current value ({timeOfDayValue}) is outside standard range.</p>
-		{:else}
-			<p class="form-hint">Current: {TIME_OF_DAY_NAMES[timeOfDayValue] || 'Unknown'}</p>
+			<p class="form-hint warning">Value ({timeOfDayValue}) is outside standard range.</p>
 		{/if}
 	</div>
 </div>

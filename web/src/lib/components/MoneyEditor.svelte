@@ -36,7 +36,6 @@
 		/>
 		<button class="max-btn" onclick={setMaxMoney}>Max</button>
 	</div>
-	<div class="form-hint">Current: ¥{moneyValue.toLocaleString()}</div>
 </div>
 
 <style>
