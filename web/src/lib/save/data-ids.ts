@@ -46,10 +46,7 @@ export const DATA_IDS = {
 	TreasureChestsOpened: 7909,
 	TwilightFragmentsUsed: 1431,
 	ShiftCounter: 576,
-	ChanceEncounters: 13158,
-	JobEarnings: 516,
-	AllOutAttackBase: 7909,
-	AllOutAttackOffset: 32784
+	JobEarnings: 516
 };
 
 export const DIFFICULTY_NAMES: Record<number, string> = {

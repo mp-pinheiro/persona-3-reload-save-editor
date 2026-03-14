@@ -1,6 +1,6 @@
 import type { GVASData } from '../gvas/types.js';
 import { findByIdUInt32, getClearStatus, getSaveSummary } from './queries.js';
-import { DATA_IDS, ALL_OUT_ATTACK_IDS } from './data-ids.js';
+import { DATA_IDS } from './data-ids.js';
 import type { AchievementProgress } from './structures.js';
 
 export interface AchievementReport {
@@ -13,34 +13,33 @@ export function getAchievementProgress(properties: GVASData[]): AchievementRepor
 	const summary = getSaveSummary(properties);
 	const clearStatus = getClearStatus(properties);
 
-	const completed: AchievementProgress[] = [];
-	const inProgress: AchievementProgress[] = [];
+	const trackable: AchievementProgress[] = [];
 	const cannotTrack: AchievementProgress[] = [];
 
 	// Social Link achievements
 	const maxedLinks = summary.socialLinks.filter((sl) => sl.level === 10).length;
 	const unlockedLinks = summary.socialLinks.filter((sl) => sl.level > 0).length;
 
-	completed.push({
+	trackable.push({
 		name: 'Unbreakable Link',
 		completed: maxedLinks >= 1,
-		progress: maxedLinks,
+		progress: Math.min(maxedLinks, 1),
 		max: 1,
 		description: 'Maxed out one Social Link'
 	});
 
-	inProgress.push({
+	trackable.push({
 		name: 'People Person',
 		completed: unlockedLinks === 22,
-		progress: unlockedLinks,
+		progress: Math.min(unlockedLinks, 22),
 		max: 22,
 		description: 'Unlocked all Social Links'
 	});
 
-	inProgress.push({
+	trackable.push({
 		name: 'A Legacy of Friendships',
 		completed: maxedLinks === 22,
-		progress: maxedLinks,
+		progress: Math.min(maxedLinks, 22),
 		max: 22,
 		description: 'Maxed out all Social Links'
 	});
@@ -50,15 +49,15 @@ export function getAchievementProgress(properties: GVASData[]): AchievementRepor
 	const hasMaxedStat = academics >= 230 || charm >= 100 || courage >= 80;
 	const allMaxed = academics >= 230 && charm >= 100 && courage >= 80;
 
-	completed.push({
+	trackable.push({
 		name: 'Specialist',
 		completed: hasMaxedStat,
-		progress: Math.max(academics, charm, courage),
+		progress: Math.min(Math.max(academics, charm, courage), 230),
 		max: 230,
 		description: 'Maxed out one Social Stat'
 	});
 
-	completed.push({
+	trackable.push({
 		name: 'Peak Performance',
 		completed: allMaxed,
 		progress: Math.min(academics, charm, courage),
@@ -68,99 +67,77 @@ export function getAchievementProgress(properties: GVASData[]): AchievementRepor
 
 	// Exploration achievements
 	const twilightFragments = findByIdUInt32(properties, DATA_IDS.TwilightFragmentsCollected) || 0;
-	inProgress.push({
+	trackable.push({
 		name: 'Eagle Eye',
 		completed: twilightFragments >= 124,
-		progress: twilightFragments,
+		progress: Math.min(twilightFragments, 124),
 		max: 124,
 		description: 'Collect all 124 Twilight Fragments'
 	});
 
 	const monadDoors = findByIdUInt32(properties, DATA_IDS.MonadDoorsConquered) || 0;
-	inProgress.push({
+	trackable.push({
 		name: 'Glimpse of the Depths',
 		completed: monadDoors >= 10,
-		progress: monadDoors,
+		progress: Math.min(monadDoors, 10),
 		max: 10,
 		description: 'Conquer 10 Monad Doors'
 	});
 
 	const treasureChests = findByIdUInt32(properties, DATA_IDS.TreasureChestsOpened) || 0;
-	completed.push({
+	trackable.push({
 		name: 'Briefcase Burglar',
 		completed: treasureChests >= 50,
-		progress: treasureChests,
+		progress: Math.min(treasureChests, 50),
 		max: 50,
 		description: 'Open 50 Treasure Chests'
 	});
 
 	const fragmentsUsed = findByIdUInt32(properties, DATA_IDS.TwilightFragmentsUsed) || 0;
-	completed.push({
+	trackable.push({
 		name: 'Shattered Plumes',
 		completed: fragmentsUsed >= 50,
-		progress: fragmentsUsed,
+		progress: Math.min(fragmentsUsed, 50),
 		max: 50,
 		description: 'Use 50 Twilight Fragments'
 	});
 
-	// Combat achievements
-	const allOutAttacks = findByIdUInt32(properties, DATA_IDS.AllOutAttackBase) || 0;
-	completed.push({
-		name: "Making the Dream Work",
-		completed: allOutAttacks >= 50,
-		progress: allOutAttacks,
-		max: 50,
-		description: 'Perform 50 All-Out Attacks'
-	});
-
-	const chanceEncounters = findByIdUInt32(properties, DATA_IDS.ChanceEncounters) || 0;
-	completed.push({
-		name: 'Shrouded Assassin',
-		completed: chanceEncounters >= 50,
-		progress: chanceEncounters,
-		max: 50,
-		description: 'Trigger 50 Chance Encounters'
-	});
-
 	// Story achievements
-	if (clearStatus !== null) {
-		const defeatedNyx = clearStatus !== 0;
-		const goodEnding = clearStatus === 1;
+	const defeatedNyx = clearStatus !== null && clearStatus !== 0;
+	const goodEnding = clearStatus === 1;
 
-		completed.push({
-			name: 'The Great Seal',
-			completed: defeatedNyx,
-			progress: defeatedNyx ? 1 : 0,
-			max: 1,
-			description: 'Defeat Nyx'
-		});
+	trackable.push({
+		name: 'The Great Seal',
+		completed: defeatedNyx,
+		progress: defeatedNyx ? 1 : 0,
+		max: 1,
+		description: 'Defeat Nyx'
+	});
 
-		completed.push({
-			name: 'From Shadows into Light',
-			completed: goodEnding,
-			progress: goodEnding ? 1 : 0,
-			max: 1,
-			description: 'Watch the good ending'
-		});
-	} else {
-		inProgress.push({
-			name: 'The Great Seal',
-			completed: false,
-			progress: 0,
-			max: 1,
-			description: 'Defeat Nyx'
-		});
+	trackable.push({
+		name: 'From Shadows into Light',
+		completed: goodEnding,
+		progress: goodEnding ? 1 : 0,
+		max: 1,
+		description: 'Watch the good ending'
+	});
 
-		inProgress.push({
-			name: 'From Shadows into Light',
-			completed: false,
-			progress: 0,
-			max: 1,
-			description: 'Watch the good ending'
-		});
-	}
+	cannotTrack.push({
+		name: 'Shrouded Assassin',
+		completed: false,
+		progress: 0,
+		max: 50,
+		description: 'Data ID 13158 reads 0 even when achievement is unlocked'
+	});
 
-	// Cannot track (requires data discovery)
+	cannotTrack.push({
+		name: 'Making the Dream Work',
+		completed: false,
+		progress: 0,
+		max: 50,
+		description: 'Data ID 7909 collides with Treasure Chests counter'
+	});
+
 	cannotTrack.push({
 		name: 'Path to Salvation',
 		completed: false,
@@ -200,6 +177,9 @@ export function getAchievementProgress(properties: GVASData[]): AchievementRepor
 		max: 50000,
 		description: 'Earn 50000 yen from jobs'
 	});
+
+	const completed = trackable.filter((a) => a.completed);
+	const inProgress = trackable.filter((a) => !a.completed);
 
 	return { completed, inProgress, cannotTrack };
 }
