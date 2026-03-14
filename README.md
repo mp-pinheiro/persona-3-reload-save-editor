@@ -15,25 +15,21 @@ The **recommended way** to use this editor is the web version, which runs entire
 
 ## Features
 
-- Edit Money, Firstname, Lastname
-- Edit Character stats (MC, Yukari, Junpei)
-- Edit Playtime, Difficulty
-- Edit Social Link levels and points
-- Edit Social Stats (Academics, Charm, Courage)
-- Edit Personas (level, exp, skills, stats)
-- **NEW:** Achievement Progress Tracking - view progress toward all 56 achievements
-- **NEW:** Job Earnings tracking for "The Grindset Mindset"
-- **NEW:** Corrected exploration IDs (Twilight Fragments, Monad Doors, etc.)
+**Summary**
+- Character name, playtime, current day (with calendar date), time of day, difficulty, money
 
-## Usage
+**Social Stats**
+- Edit Academics, Charm, and Courage
 
-1. Place `SavConverter/` folder in the same directory as `Editor.py`
-2. Run: `python3 Editor.py`
-3. Enter the path to your `.sav` file when prompted
-4. Type `help` to see all available commands
-5. Type `achievements` to see achievement progress
+**Social Links**
+- Edit level and points for all Social Links
 
-**Important:** The editor creates automatic backups in `{save-path}/backup/{timestamp}_{filename}.sav` whenever you save.
+**Combat**
+- Edit character level, EXP, HP, and SP for all party members
+- Edit persona slots: persona selection, level, EXP, skills (8 slots), and stats (St/Ma/En/Ag/Lu)
+
+**Story Flags**
+- Set game completion status (pre-Nyx, good ending, bad ending)
 
 ## Platform Compatibility
 
