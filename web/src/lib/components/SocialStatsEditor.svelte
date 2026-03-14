@@ -153,17 +153,18 @@
 
 	.tick-marks {
 		position: relative;
-		height: 0.5rem;
-		margin-top: 0.125rem;
+		height: 0.625rem;
+		margin-top: 0.25rem;
 		margin-right: calc(10rem + 1rem);
 	}
 
 	.tick-mark {
 		position: absolute;
-		top: 0;
-		width: 2px;
-		height: 100%;
+		top: 50%;
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
 		background: var(--text-muted);
-		opacity: 0.4;
+		transform: translate(-50%, -50%);
 	}
 </style>

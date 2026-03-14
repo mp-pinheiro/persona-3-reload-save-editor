@@ -142,10 +142,9 @@
 	.tier-marker {
 		position: absolute;
 		top: -1px;
-		width: 2px;
+		width: 3px;
 		height: calc(100% + 2px);
-		background: var(--text-muted);
-		opacity: 0.5;
+		background: var(--bg-tertiary);
 		pointer-events: auto;
 	}
 </style>
