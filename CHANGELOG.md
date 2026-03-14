@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-03-14
+
+### Added
+- Web-based save editor (Svelte 5 + SvelteKit, static adapter)
+- GVAS binary parser and serializer ported from Python to TypeScript
+- XOR encryption/decryption for P3R save files
+- Save summary with character name, playtime, day, difficulty, money
+- Social stats editor with sliders (Academics, Charm, Courage)
+- Money editor with max button
+- Social links editor with per-link level dropdowns
+- Difficulty editor (Peaceful through Merciless)
+- Date and time editor (day counter, time of day)
+- Story flags editor (game completion status)
+- Achievement progress tracker (completed, in progress, cannot track)
+- Export modified save with re-encryption
+- GitHub Actions workflow for GitHub Pages deployment
+- Project documentation (PRD, technical spec, vision, achievement tracker)
+
+### Changed
+- Updated README with web version quick start
+- Updated CLAUDE.md with web tool reference
+
+### Removed
+- Obsolete CONTEXT.md and PLAN.md planning documents
+
 ## [0.0.0] - 2026-03-13
 
 ### Added

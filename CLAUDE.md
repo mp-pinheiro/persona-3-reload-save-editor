@@ -1,6 +1,12 @@
-# Persona 3 Reload Save Editor - Context for AI Agents
+# Persona 3 Reload Save Editor - Quick Reference
 
-## CRITICAL: DO NOT RUN Editor.py INTERACTIVELY
+## Part 1: Save Editor (Python)
+
+### CRITICAL: DO NOT START DEV SERVER, YOU ARE SANDBOXED
+
+**Check if the server is already running on port 3000/3001. If not ASK USER TO START IT.**
+
+### CRITICAL: DO NOT RUN Editor.py INTERACTIVELY
 
 **Editor.py HAS CODE AT THE BOTTOM THAT ENTERS INTERACTIVE MODE.**
 
@@ -11,13 +17,11 @@ If you run ANY script that:
 
 **IT WILL HANG WAITING FOR USER INPUT.**
 
-## IMPORTANT: PRESERVE USER DATA
+### Preserving User Data
 
-**DO NOT delete or modify the `data/` directory.** This contains the user's actual save files and test data. When running cleanup operations, always preserve:
-- `data/Steam/YOUR_STEAM_ID/` - User's personal save files
-- `data/Mod/` - Comparison saves for testing
+**DO NOT delete or modify the `data/` directory.** This contains the user's actual save files and test data.
 
-## ALWAYS Use This Pattern for Testing Save Data
+### Testing Save Data (Safe Pattern)
 
 ```python
 # CORRECT - Direct save processing without Editor.py
@@ -49,10 +53,9 @@ os.remove(temp_file_path)
 js = json.loads(json_data)
 ```
 
-## How to Replicate Editor.py Functions Without Importing
+### Replicating LoadByNameN Without Importing
 
 ```python
-# Replicate LoadByNameN without importing Editor.py
 def LoadByNameN(js, name, header, nvar):
     for i in js[:]:
         if i["type"] == name:
@@ -60,53 +63,15 @@ def LoadByNameN(js, name, header, nvar):
                 return i.get("value")
     return None
 
-# Example usage:
 academics = LoadByNameN(js, "UInt32Property", 0, 5356)
 ```
 
-## Testing Syntax Only
+### Testing Syntax Only
 
 ```bash
-# This is SAFE - only checks syntax, doesn't run code
 python3 -m py_compile Editor.py
-
-# This is also SAFE
 python3 -c "import ast; ast.parse(open('Editor.py').read())"
 ```
-
-## What NEVER To Do
-
-```bash
-# BAD - Will hang in interactive mode
-python3 -c "from Editor import Persona3Save"
-
-# BAD - Will hang
-python3 test_script.py  # if test_script.py imports Editor
-
-# BAD - Will hang
-python3 Editor.py < any_input
-
-# BAD - Will hang
-cd /path/to/project && python3
->>> import Editor
-```
-
-## If You Need to Test Editor.py Changes
-
-1. Make changes with Edit tool
-2. Check syntax: `python3 -m py_compile Editor.py`
-3. Create test using SavConverter directly (see pattern above)
-4. NEVER import Editor.py
-
-## Project Overview
-
-A Python save editor for Persona 3 Reload that can read, modify, and write save files in GVAS format.
-
-### File Structure
-
-- `Editor.py` - Main save editor with interactive CLI (NEVER RUN DIRECTLY)
-- `SavConverter.py` - GVAS JSON conversion utilities (SAFE to import)
-- `PLAN.md` - Master tracking document for achievement tracker implementation
 
 ### Known Data IDs
 
@@ -124,11 +89,30 @@ A Python save editor for Persona 3 Reload that can read, modify, and write save 
 # Date/Time
 1932: Day counter, 1933: Time of day, 1934: Day skip flag
 
+# Exploration (achievement tracking)
+1429: Twilight Fragments collected (124 total in game)
+1393: Monad Doors conquered (achievement needs 10)
+7909: Treasure Chests opened (achievement needs 50)
+1431: Twilight Fragments used (achievement needs 50)
+
+# Combat
+576: Shift counter
+13158: Chance Encounters (achievement needs 50)
+7909, 40689, 73473, 106257, 139041, 171825, 204609: All-Out Attacks
+Per-teammate offset: 32784
+
+# Team Progression
+201557, 201605, 201669, 201717, 201733: Ultimate Personas (value 127 = all 7)
+201693, 201749: Combat Characteristics (value 7)
+
+# Activities
+516: Job earnings (achievement needs 50000 yen)
+
 # Other
 7261: Money, 12836: Playtime, 388: Difficulty
 ```
 
-### Social Link Data Format
+### Social Link Level Parsing
 
 ```python
 value = LoadByNameN(js, "UInt32Property", 0, sl_id)
@@ -137,53 +121,95 @@ if value:
     level = bytes_val[0]  # 0-10
 ```
 
-## Available Save Files
+### Story Flags
 
-### Mod Saves (for comparison):
+- `ClearStatus` in SaveDataHeadder StructProperty (header index 1)
+- None = pre-Nyx, 1 = good ending, 2 = bad ending
+
+### File Structure
+
+- `Editor.py` - Main save editor with CLI (NEVER RUN DIRECTLY)
+- `SavConverter/` - GVAS format handling (SavReader.py, SavWriter.py, SavToJson.py, JsonToSav.py, SavProperties.py)
+- `web/` - PyScript implementation (deprecated, being replaced)
+
+### Available Save Files
+
+**Mod Saves (for comparison):**
 - `data/Mod/SaveData001.sav` - 01/31 day save (early game)
 - `data/Mod/SaveData002.sav` - Bad ending NG+ (post-Nyx)
 - `data/Mod/SaveData003.sav` - Good ending NG+ (90%+ compendium)
 
-### Steam Saves (user's progress):
+**Steam Saves (user's progress):**
 - `data/Steam/YOUR_STEAM_ID/SaveData005.sav` - Jan, all SLs 9+, Nyx not defeated
 
-## Discovery Findings (from agents)
+---
 
-### Story Flags (Task 3 - Complete)
-- `ClearStatus` in SaveDataHeadder StructProperty (header index 1)
-- None = pre-Nyx, 1 = good ending, 2 = bad ending
+## Part 2: Web Tool (JavaScript)
 
-### Combat Counters (Task 5 - Complete)
-- Per-teammate offset pattern: 32784
-- All-Out Attack candidates: IDs 7909, 40689, 73473, 106257, 139041, 171825, 204609
-- Chance Encounter candidates: IDs 13158, 45938, 78722, 111506, 144290, 177074, 209882
-- Shift candidate: ID 576
+### Architecture
 
-### Exploration Counters (Corrected)
-- 1429: Twilight Fragments collected (game has 124 total)
-- 1393: Monad Doors conquered (with offset 32784 per teammate)
-- 1431: Twilight Fragments used (achievement needs 50)
-- 7909: Treasure Chests opened (achievement needs 50)
+**Tech Stack:** Svelte 5 + SvelteKit static adapter + Vite
 
-### Activities Counters
-- 516: Job earnings (achievement needs 50000 yen) - CONFIRMED
+- Runs entirely client-side (no server)
+- Deployed to GitHub Pages
+- Binary handling via native DataView/ArrayBuffer APIs
 
-### Compendium (Task 4 - Complete)
-- No straightforward structure in UInt32Property
-- May be bitmasks, ByteProperty, or other encoding
+### Documentation
 
-## Current Task: Achievement Progress Tracker
+- `docs/vision.md` - Goals, principles, success metrics
+- `docs/prd.md` - User stories, feature priorities (MVP/v1.0/future)
+- `docs/spec.md` - Technical spec, algorithms, implementation details
 
-Implementing comprehensive achievement analysis (see PLAN.md).
+### Key Algorithms to Port
 
-### Where to Add New Methods
+**Decryption:**
+```typescript
+const KEY = 'ae5zeitaix1joowooNgie3fahP5Ohph';
+for (let i = 0; i < data.length; i++) {
+    const keyIdx = i % KEY.length;
+    const bVar1 = data[i] ^ KEY.charCodeAt(keyIdx);
+    result[i] = ((bVar1 >> 4) & 3) | ((bVar1 & 3) << 4) | (bVar1 & 0xcc);
+}
+```
 
-Add methods in the `Persona3Save` class, typically after existing edit methods.
+**Binary Reading (DataView):**
+```typescript
+const view = new DataView(arrayBuffer);
+const value = view.getUint32(offset, true); // true = little-endian
+```
+
+### JS Project Structure (Planned)
+
+```
+src/
+├── lib/
+│   ├── crypto/decrypt.ts      # XOR + bit manipulation
+│   ├── gvas/                  # GVAS parsing (reader, writer, parser, types)
+│   ├── save/                  # Data IDs, structures, queries
+│   └── ui/stores.ts           # Svelte state
+├── routes/+page.svelte        # Main editor page
+└── app.css
+```
+
+### MVP Features
+
+| Feature | Description |
+|---------|-------------|
+| File Upload | Drag-and-drop .sav file |
+| Decryption | Persona 3 XOR + bit manipulation |
+| GVAS Parsing | Epic Games binary format |
+| Basic Editing | Money, Social Stats, Social Links |
+| File Export | Download modified .sav file |
+
+### Achievement Tracking
+
+See `docs/achievement-tracker.md` for comprehensive achievement data discovery results.
+
+---
 
 ## Important
 
 - Always use `Edit` tool for modifications, NOT `Write`
 - Test syntax with `python3 -m py_compile Editor.py`
-- Use `git diff` to verify changes
 - **NEVER import or run Editor.py directly**
 - **Always use SavConverter directly for save data testing**

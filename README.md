@@ -1,6 +1,15 @@
 # Persona 3 Reload Save Editor
 
-A Python-based save editor for Persona 3 Reload that can read, modify, and write save files in GVAS format.
+A save editor for Persona 3 Reload that can read, modify, and write save files in GVAS format.
+
+## Quick Start: Web Version
+
+The **recommended way** to use this editor is the web version, which runs entirely in your browser:
+
+**[Live Demo](https://your-username.github.io/persona-3-reload-save-editor/)**
+
+- No installation required
+- Runs entirely client-side -- save data never leaves your device
 
 **Note:** Data IDs have been updated for the current game version (+4 offset after game updates).
 
