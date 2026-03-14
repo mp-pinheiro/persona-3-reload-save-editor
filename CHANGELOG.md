@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-03-14
+
+### Added
+- Combat tab with character stat editing (level, EXP, HP, SP)
+- Persona slot editor with persona selection, level, EXP, and skill assignment
+- Persona stat editing (St/Ma/En/Ag/Lu) per slot
+- SkillSelect component with searchable dropdown
+- combat-data.ts with character definitions, persona/skill name lists, and encode/decode helpers
+- combat-queries.ts for reading and writing combat data from save properties
+
 ## [1.0.3] - 2026-03-14
 
 ### Fixed

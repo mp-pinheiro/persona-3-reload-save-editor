@@ -9,6 +9,7 @@
 	import ExportButton from './ExportButton.svelte';
 	import DifficultyEditor from './DifficultyEditor.svelte';
 	import DateTimeEditor from './DateTimeEditor.svelte';
+	import CombatEditor from './CombatEditor.svelte';
 	import { FEATURES } from '$lib/config/features.js';
 
 	let activeTab = $uiState.activeTab;
@@ -17,6 +18,7 @@
 		{ id: 'summary' as const, label: 'Summary' },
 		{ id: 'stats' as const, label: 'Social Stats' },
 		{ id: 'social-links' as const, label: 'Social Links' },
+		{ id: 'combat' as const, label: 'Combat' },
 		{ id: 'achievements' as const, label: 'Achievements', feature: 'achievements' as const },
 		{ id: 'story' as const, label: 'Story Flags' }
 	];
@@ -71,6 +73,8 @@
 				<h2>Social Links</h2>
 				<SocialLinksEditor />
 			</div>
+		{:else if activeTab === 'combat'}
+			<CombatEditor />
 		{:else if activeTab === 'achievements'}
 			<div class="card">
 				<h2>Achievement Progress</h2>
