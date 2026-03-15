@@ -1,0 +1,5 @@
+name = "persona-3-reload-save-editor"
+compatibility_date = "2025-03-14"
+
+[assets]
+directory = "./build"
