@@ -1,5 +1,9 @@
 name = "persona-3-reload-save-editor"
 compatibility_date = "2025-03-14"
 
+[[routes]]
+pattern = "p3rsave.fairfruit.tv"
+custom_domain = true
+
 [assets]
 directory = "./build"
