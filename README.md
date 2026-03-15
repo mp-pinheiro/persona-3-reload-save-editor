@@ -1,31 +1,26 @@
 # Persona 3 Reload Save Editor
 
-A save editor for Persona 3 Reload that can read, modify, and write save files in GVAS format.
+A browser-based save editor for Persona 3 Reload. Reads, modifies, and writes save files in GVAS format entirely client-side.
 
-## Quick Start: Web Version
-
-The **recommended way** to use this editor is the web version, which runs entirely in your browser:
-
-**[Live Demo](https://your-username.github.io/persona-3-reload-save-editor/)**
+**[https://p3rsave.fairfruit.tv](https://p3rsave.fairfruit.tv)**
 
 - No installation required
-- Runs entirely client-side -- save data never leaves your device
-
-**Note:** Data IDs have been updated for the current game version (+4 offset after game updates).
+- Runs entirely in the browser -- save data never leaves your device
 
 ## Features
 
 **Summary**
-- Character name, playtime, current day (with calendar date), time of day, difficulty, money
+- Character name, playtime, current day (with in-game calendar date), time of day, difficulty, money
 
 **Social Stats**
-- Edit Academics, Charm, and Courage
+- Edit Academics, Charm, and Courage (with tier markers)
 
 **Social Links**
-- Edit level and points for all Social Links
+- Edit level (0-10) for all 22 Social Links
+- "Max All Unlocked" shortcut
 
 **Combat**
-- Edit character level, EXP, HP, and SP for all party members
+- Edit level, EXP, HP, and SP for all party members
 - Edit persona slots: persona selection, level, EXP, skills (8 slots), and stats (St/Ma/En/Ag/Lu)
 
 **Story Flags**
@@ -39,7 +34,7 @@ Tested with Steam version. May work with:
 
 ## Warning
 
-External save modification can damage your save file. Use at your own risk. The editor creates backups, but always keep your own backups.
+External save modification can damage your save file. Always keep your own backups before editing.
 
 ## Project Origins
 
