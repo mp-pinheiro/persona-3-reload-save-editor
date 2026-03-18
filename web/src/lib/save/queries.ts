@@ -166,6 +166,46 @@ function getSocialLinkName(id: number): string {
 	return names[id] || `SL ${id}`;
 }
 
+function idToPadding(id: number): Uint8Array {
+	const bytes = new Uint8Array(4);
+	new DataView(bytes.buffer).setUint32(0, id, true);
+	return bytes;
+}
+
+function insertBeforeFileEnd(properties: GVASData[], newProp: GVASData): void {
+	const fileEndIndex = properties.findIndex(p => p.type === PropertyType.FileEndProperty);
+	if (fileEndIndex !== -1) {
+		properties.splice(fileEndIndex, 0, newProp);
+	} else {
+		properties.push(newProp);
+	}
+}
+
+export function createUInt32Property(id: number, value: number): UInt32PropertyData {
+	return {
+		type: PropertyType.UInt32Property,
+		name: 'SaveDataArea',
+		paddingStatic: new Uint8Array([0x04, 0x00, 0x00, 0x00]),
+		padding: idToPadding(id),
+		value
+	};
+}
+
+export function upsertUInt32Property(
+	properties: GVASData[],
+	id: number,
+	newValue: number
+): boolean {
+	for (const prop of properties) {
+		if (prop.type === PropertyType.UInt32Property && getPaddingId(prop) === id) {
+			(prop as UInt32PropertyData).value = newValue;
+			return true;
+		}
+	}
+	insertBeforeFileEnd(properties, createUInt32Property(id, newValue));
+	return true;
+}
+
 export function updateUInt32Property(
 	properties: GVASData[],
 	id: number,

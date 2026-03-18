@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2026-03-17
+
+### Added
+- Clone persona feature: empty protagonist slots show "Clone from" dropdown to copy a filled slot
+- Persona slot level requirement warnings for protagonist slots 7-12
+
+### Changed
+- Protagonist persona slots expanded from 7 to 12
+- Persona updates use upsert to create properties for previously empty slots
+
+### Fixed
+- FileEndProperty now serialized last regardless of property order in array
+
+## [1.0.6] - 2026-03-17
+
+### Added
+- upsertUInt32Property and createUInt32Property for inserting new save properties
+- insertBeforeFileEnd helper to maintain correct property ordering
+
 ## [1.0.5] - 2026-03-14
 
 ### Changed

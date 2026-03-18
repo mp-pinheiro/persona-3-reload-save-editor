@@ -1057,8 +1057,16 @@ export function serializeGVAS(properties: GVASData[]): ArrayBuffer {
 	const writer = new BinaryWriter();
 	const serializer = new PropertySerializer(writer);
 
+	let fileEndProp: GVASData | undefined;
 	for (const prop of properties) {
+		if (prop.type === PropertyType.FileEndProperty) {
+			fileEndProp = prop;
+			continue;
+		}
 		serializer.serializeProperty(prop);
+	}
+	if (fileEndProp) {
+		serializer.serializeProperty(fileEndProp);
 	}
 
 	return writer.toBuffer();
