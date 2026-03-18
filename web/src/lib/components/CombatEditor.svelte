@@ -3,6 +3,7 @@
 	import {
 		CHARACTERS,
 		PERSONA_LIST,
+		PERSONA_NAMES,
 		type CharacterDef,
 		type PersonaSlotData
 	} from '$lib/save/combat-data.js';
@@ -15,6 +16,7 @@
 		updatePersonaExp,
 		updatePersonaSkills,
 		updatePersonaStats,
+		clonePersonaSlot,
 		type CharacterData
 	} from '$lib/save/combat-queries.js';
 	import SkillSelect from './SkillSelect.svelte';
@@ -103,7 +105,20 @@
 		);
 	}
 
-
+	function handleClonePersona(stateIdx: number, targetSlotIdx: number, sourceSlotIdx: number) {
+		const state = states[stateIdx];
+		const source = state.personas[sourceSlotIdx];
+		if (source.personaId === 0) return;
+		clonePersonaSlot($saveStore.properties, state.char, targetSlotIdx, source);
+		states[stateIdx].personas[targetSlotIdx] = {
+			personaId: source.personaId,
+			level: source.level,
+			exp: source.exp,
+			skills: [...source.skills],
+			stats: { ...source.stats },
+			lu: source.lu
+		};
+	}
 </script>
 
 <div class="combat-editor">
@@ -165,7 +180,12 @@
 					{#each state.personas as persona, slotIdx (slotIdx)}
 						<div class="persona-slot">
 							{#if state.char.personaSlots > 1}
-								<h4 class="slot-title">Persona Slot {slotIdx + 1}</h4>
+								<h4 class="slot-title">
+									Persona Slot {slotIdx + 1}
+									{#if state.char.key === 'protagonist' && slotIdx >= 6}
+										<span class="slot-warning">Requires Lv{slotIdx < 8 ? 12 : slotIdx < 10 ? 20 : 30}+</span>
+									{/if}
+								</h4>
 							{/if}
 
 							<div class="persona-header-row">
@@ -277,6 +297,31 @@
 										/>
 									</div>
 								</div>
+							{:else if state.char.key === 'protagonist'}
+								{@const filledSlots = state.personas
+									.map((p, i) => ({ p, i }))
+									.filter(({ p, i }) => p.personaId > 0 && i !== slotIdx)}
+								{#if filledSlots.length > 0}
+									<div class="clone-section">
+										<span class="field-label">Clone from</span>
+										<select
+											class="persona-dropdown"
+											value=""
+											onchange={(e) => {
+												const val = (e.target as HTMLSelectElement).value;
+												if (val !== '') handleClonePersona(stateIdx, slotIdx, Number(val));
+												(e.target as HTMLSelectElement).value = '';
+											}}
+										>
+											<option value="" disabled selected>Select a persona to clone...</option>
+											{#each filledSlots as { p, i } (i)}
+												<option value={i}>
+													Slot {i + 1}: {PERSONA_NAMES[p.personaId] ?? `#${p.personaId}`} (Lv{p.level})
+												</option>
+											{/each}
+										</select>
+									</div>
+								{/if}
 							{/if}
 						</div>
 					{/each}
@@ -359,6 +404,13 @@
 		color: var(--text-secondary);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
+	}
+
+	.slot-warning {
+		color: #fca5a5;
+		font-weight: 500;
+		text-transform: none;
+		letter-spacing: normal;
 	}
 
 	.persona-header-row {
@@ -452,6 +504,13 @@
 		flex-wrap: wrap;
 		padding-top: 0.625rem;
 		border-top: 1px solid var(--border);
+	}
+
+	.clone-section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.375rem;
+		padding-top: 0.5rem;
 	}
 
 	@media (max-width: 640px) {

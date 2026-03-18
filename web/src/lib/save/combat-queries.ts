@@ -1,5 +1,5 @@
 import type { GVASData } from '../gvas/types.js';
-import { findByIdUInt32, updateUInt32Property } from './queries.js';
+import { findByIdUInt32, updateUInt32Property, upsertUInt32Property } from './queries.js';
 import {
 	type CharacterDef,
 	type PersonaSlotData,
@@ -41,7 +41,8 @@ export function updateCharacterField(
 		level: char.levelOffset,
 		exp: char.expOffset
 	};
-	return updateUInt32Property(properties, char.baseId + offsets[field], value);
+	const id = char.baseId + offsets[field];
+	return updateUInt32Property(properties, id, value);
 }
 
 export function getPersonaSlot(
@@ -80,7 +81,8 @@ export function updatePersonaId(
 	personaId: number
 ): boolean {
 	const base = getPersonaSlotBaseId(char, slotIndex);
-	return updateUInt32Property(properties, base + SLOT_OFFSETS.personaId, encodePersonaId(personaId));
+	const id = base + SLOT_OFFSETS.personaId;
+	return upsertUInt32Property(properties, id, encodePersonaId(personaId));
 }
 
 export function updatePersonaLevel(
@@ -90,7 +92,8 @@ export function updatePersonaLevel(
 	level: number
 ): boolean {
 	const base = getPersonaSlotBaseId(char, slotIndex);
-	return updateUInt32Property(properties, base + SLOT_OFFSETS.level, level);
+	const id = base + SLOT_OFFSETS.level;
+	return upsertUInt32Property(properties, id, level);
 }
 
 export function updatePersonaExp(
@@ -100,7 +103,8 @@ export function updatePersonaExp(
 	exp: number
 ): boolean {
 	const base = getPersonaSlotBaseId(char, slotIndex);
-	return updateUInt32Property(properties, base + SLOT_OFFSETS.exp, exp);
+	const id = base + SLOT_OFFSETS.exp;
+	return upsertUInt32Property(properties, id, exp);
 }
 
 export function updatePersonaSkills(
@@ -112,10 +116,10 @@ export function updatePersonaSkills(
 	const base = getPersonaSlotBaseId(char, slotIndex);
 	const padded = [...skills, 0, 0, 0, 0, 0, 0, 0, 0].slice(0, 8);
 
-	const ok1 = updateUInt32Property(properties, base + SLOT_OFFSETS.skillSlot1, encodeSkillSlot(padded[0], padded[1]));
-	const ok2 = updateUInt32Property(properties, base + SLOT_OFFSETS.skillSlot2, encodeSkillSlot(padded[2], padded[3]));
-	const ok3 = updateUInt32Property(properties, base + SLOT_OFFSETS.skillSlot3, encodeSkillSlot(padded[4], padded[5]));
-	const ok4 = updateUInt32Property(properties, base + SLOT_OFFSETS.skillSlot4, encodeSkillSlot(padded[6], padded[7]));
+	const ok1 = upsertUInt32Property(properties, base + SLOT_OFFSETS.skillSlot1, encodeSkillSlot(padded[0], padded[1]));
+	const ok2 = upsertUInt32Property(properties, base + SLOT_OFFSETS.skillSlot2, encodeSkillSlot(padded[2], padded[3]));
+	const ok3 = upsertUInt32Property(properties, base + SLOT_OFFSETS.skillSlot3, encodeSkillSlot(padded[4], padded[5]));
+	const ok4 = upsertUInt32Property(properties, base + SLOT_OFFSETS.skillSlot4, encodeSkillSlot(padded[6], padded[7]));
 
 	return ok1 && ok2 && ok3 && ok4;
 }
@@ -128,7 +132,7 @@ export function updatePersonaStats(
 	lu: number
 ): boolean {
 	const base = getPersonaSlotBaseId(char, slotIndex);
-	const okStats = updateUInt32Property(
+	const okStats = upsertUInt32Property(
 		properties,
 		base + SLOT_OFFSETS.stats,
 		encodePersonaStats(stats.st, stats.ma, stats.en, stats.ag)
@@ -136,6 +140,20 @@ export function updatePersonaStats(
 	const luId = base + SLOT_OFFSETS.lu;
 	const rawLu = findByIdUInt32(properties, luId) ?? 0;
 	const newLu = (rawLu & 0xffffff00) | (lu & 0xff);
-	const okLu = updateUInt32Property(properties, luId, newLu);
+	const okLu = upsertUInt32Property(properties, luId, newLu);
 	return okStats && okLu;
+}
+
+export function clonePersonaSlot(
+	properties: GVASData[],
+	char: CharacterDef,
+	targetSlotIndex: number,
+	source: PersonaSlotData
+): boolean {
+	const ok1 = updatePersonaId(properties, char, targetSlotIndex, source.personaId);
+	const ok2 = updatePersonaLevel(properties, char, targetSlotIndex, source.level);
+	const ok3 = updatePersonaExp(properties, char, targetSlotIndex, source.exp);
+	const ok4 = updatePersonaSkills(properties, char, targetSlotIndex, source.skills);
+	const ok5 = updatePersonaStats(properties, char, targetSlotIndex, source.stats, source.lu);
+	return ok1 && ok2 && ok3 && ok4 && ok5;
 }

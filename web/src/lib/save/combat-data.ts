@@ -45,7 +45,7 @@ export const CHARACTERS: CharacterDef[] = [
 		spOffset: 1,
 		levelOffset: 4,
 		expOffset: 5,
-		personaSlots: 7,
+		personaSlots: 12,
 		personaBase: 13090
 	},
 	partyMember('yukari', 'Yukari Takeba', 13074 + CHAR_OFFSET),
