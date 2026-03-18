@@ -99,17 +99,17 @@ export function decodeSkillSlot(stored: number): [number, number] {
 	return [(stored >>> 16) & 0xffff, stored & 0xffff];
 }
 
-// (st << 24) | (ma << 16) | (en << 8) | ag (Editor.py:1317-1336)
+// Little-endian UInt32 byte layout: St | Ma | En | Ag (Editor.py:1317-1336)
 export function encodePersonaStats(st: number, ma: number, en: number, ag: number): number {
-	return (((st & 0xff) << 24) | ((ma & 0xff) << 16) | ((en & 0xff) << 8) | (ag & 0xff)) >>> 0;
+	return (((ag & 0xff) << 24) | ((en & 0xff) << 16) | ((ma & 0xff) << 8) | (st & 0xff)) >>> 0;
 }
 
 export function decodePersonaStats(stored: number): { st: number; ma: number; en: number; ag: number } {
 	return {
-		st: (stored >>> 24) & 0xff,
-		ma: (stored >>> 16) & 0xff,
-		en: (stored >>> 8) & 0xff,
-		ag: stored & 0xff
+		st: stored & 0xff,
+		ma: (stored >>> 8) & 0xff,
+		en: (stored >>> 16) & 0xff,
+		ag: (stored >>> 24) & 0xff
 	};
 }
 
