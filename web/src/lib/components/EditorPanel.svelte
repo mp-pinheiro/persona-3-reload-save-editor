@@ -10,6 +10,7 @@
 	import DifficultyEditor from './DifficultyEditor.svelte';
 	import DateTimeEditor from './DateTimeEditor.svelte';
 	import CombatEditor from './CombatEditor.svelte';
+	import PlayerNameEditor from './PlayerNameEditor.svelte';
 	import { FEATURES } from '$lib/config/features.js';
 
 	let activeTab = $uiState.activeTab;
@@ -52,6 +53,10 @@
 		{#if activeTab === 'summary'}
 			<SummaryCard />
 		{:else if activeTab === 'stats'}
+			<div class="card">
+				<h2>Player Name</h2>
+				<PlayerNameEditor />
+			</div>
 			<div class="card">
 				<h2>Social Stats</h2>
 				<SocialStatsEditor />

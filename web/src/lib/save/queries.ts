@@ -1,6 +1,6 @@
 import { PropertyType } from '../gvas/types.js';
-import type { GVASData, UInt32PropertyData, IntPropertyData, StrPropertyData } from '../gvas/types.js';
-import { DATA_IDS, DIFFICULTY_NAMES, TIME_OF_DAY_NAMES } from './data-ids.js';
+import type { GVASData, UInt32PropertyData, IntPropertyData, StrPropertyData, Int8PropertyData } from '../gvas/types.js';
+import { DATA_IDS, DIFFICULTY_NAMES, TIME_OF_DAY_NAMES, NAME_DATA_IDS, NAME_CONSTRAINTS } from './data-ids.js';
 import type { SaveSummary } from './structures.js';
 
 function uint32ToBytes(value: number): Uint8Array {
@@ -287,4 +287,79 @@ export function updateStrProperty(
 		}
 	}
 	return false;
+}
+
+export function getHeaderName(properties: GVASData[], nameType: 'FirstName' | 'LastName'): string {
+	const headerStruct = findStructProperty(properties, 'SaveDataHeadder');
+	if (!headerStruct) return '';
+
+	const nameChars: number[] = [];
+	for (const child of headerStruct) {
+		if ((child as any).type === PropertyType.Int8Property && (child as any).name === nameType) {
+			nameChars.push((child as any).value);
+		}
+	}
+
+	if (nameChars.length === 0) return '';
+	return String.fromCharCode(...nameChars.filter(c => c !== 0));
+}
+
+export function updateHeaderName(properties: GVASData[], nameType: 'FirstName' | 'LastName', name: string): boolean {
+	const headerStruct = findStructProperty(properties, 'SaveDataHeadder');
+	if (!headerStruct) return false;
+
+	for (let i = headerStruct.length - 1; i >= 0; i--) {
+		if ((headerStruct[i] as any).type === PropertyType.Int8Property && (headerStruct[i] as any).name === nameType) {
+			headerStruct.splice(i, 1);
+		}
+	}
+
+	for (let i = 0; i < name.length; i++) {
+		const charCode = name.charCodeAt(i);
+		if (charCode > NAME_CONSTRAINTS.AsciiMax) continue;
+
+		headerStruct.push({
+			type: PropertyType.Int8Property,
+			name: nameType,
+			value: charCode
+		} as Int8PropertyData);
+	}
+
+	return true;
+}
+
+function deleteByIdRange(properties: GVASData[], startId: number, endId: number): void {
+	for (let i = properties.length - 1; i >= 0; i--) {
+		if (properties[i].type === PropertyType.UInt32Property) {
+			const id = getPaddingId(properties[i]);
+			if (id >= startId && id <= endId) {
+				properties.splice(i, 1);
+			}
+		}
+	}
+}
+
+export function updatePlayerName(properties: GVASData[], nameType: 'FirstName' | 'LastName', name: string): boolean {
+	if (name.length === 0 || name.length > NAME_CONSTRAINTS.MaxLength) return false;
+
+	for (let i = 0; i < name.length; i++) {
+		if (name.charCodeAt(i) > NAME_CONSTRAINTS.AsciiMax) return false;
+	}
+
+	const headerUpdated = updateHeaderName(properties, nameType, name);
+	if (!headerUpdated) return false;
+
+	const idRange = nameType === 'FirstName'
+		? { start: NAME_DATA_IDS.FirstNameStart, end: NAME_DATA_IDS.FirstNameEnd }
+		: { start: NAME_DATA_IDS.LastNameStart, end: NAME_DATA_IDS.LastNameEnd };
+
+	deleteByIdRange(properties, idRange.start, idRange.end);
+
+	for (let i = 0; i < name.length; i++) {
+		const charCode = name.charCodeAt(i);
+		const dataId = idRange.start + i;
+		insertBeforeFileEnd(properties, createUInt32Property(dataId, charCode));
+	}
+
+	return true;
 }

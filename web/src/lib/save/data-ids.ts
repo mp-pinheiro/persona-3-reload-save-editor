@@ -100,6 +100,18 @@ export const ALL_OUT_ATTACK_IDS = [
 	7909, 40689, 73473, 106257, 139041, 171825, 204609
 ];
 
+export const NAME_DATA_IDS = {
+	FirstNameStart: 17939,
+	FirstNameEnd: 17946,
+	LastNameStart: 17955,
+	LastNameEnd: 17962
+};
+
+export const NAME_CONSTRAINTS = {
+	MaxLength: 10,
+	AsciiMax: 127
+};
+
 const MONTH_DAYS = [30, 31, 30, 31, 31, 30, 31, 30, 31, 31, 28, 4];
 const MONTH_NAMES = [
 	'April', 'May', 'June', 'July', 'August', 'September',
