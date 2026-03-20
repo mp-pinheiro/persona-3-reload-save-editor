@@ -10,6 +10,7 @@
 	import DifficultyEditor from './DifficultyEditor.svelte';
 	import DateTimeEditor from './DateTimeEditor.svelte';
 	import CombatEditor from './CombatEditor.svelte';
+	import InventoryEditor from './InventoryEditor.svelte';
 	import PlayerNameEditor from './PlayerNameEditor.svelte';
 	import { FEATURES } from '$lib/config/features.js';
 
@@ -20,6 +21,7 @@
 		{ id: 'stats' as const, label: 'Social Stats' },
 		{ id: 'social-links' as const, label: 'Social Links' },
 		{ id: 'combat' as const, label: 'Combat' },
+		{ id: 'inventory' as const, label: 'Inventory' },
 		{ id: 'achievements' as const, label: 'Achievements', feature: 'achievements' as const },
 		{ id: 'story' as const, label: 'Story Flags' }
 	];
@@ -80,6 +82,11 @@
 			</div>
 		{:else if activeTab === 'combat'}
 			<CombatEditor />
+		{:else if activeTab === 'inventory'}
+			<div class="card">
+				<h2>Consumable Items</h2>
+				<InventoryEditor />
+			</div>
 		{:else if activeTab === 'achievements'}
 			<div class="card">
 				<h2>Achievement Progress</h2>

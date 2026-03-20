@@ -49,6 +49,12 @@ export const DATA_IDS = {
 	JobEarnings: 516
 };
 
+export const INVENTORY = {
+	ConsumablesBase: 6268,
+	ConsumablesOffset: 0x4000,
+	ConsumablesCount: 1024
+};
+
 export const DIFFICULTY_NAMES: Record<number, string> = {
 	0: 'Peaceful',
 	1: 'Easy',

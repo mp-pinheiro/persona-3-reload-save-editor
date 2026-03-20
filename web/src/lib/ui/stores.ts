@@ -10,7 +10,7 @@ interface LoadState {
 }
 
 interface UIState {
-	activeTab: 'summary' | 'stats' | 'social-links' | 'combat' | 'achievements' | 'story';
+	activeTab: 'summary' | 'stats' | 'social-links' | 'combat' | 'inventory' | 'achievements' | 'story';
 }
 
 interface SaveFile {
