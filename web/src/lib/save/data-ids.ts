@@ -52,7 +52,10 @@ export const DATA_IDS = {
 export const INVENTORY = {
 	ConsumablesBase: 6268,
 	ConsumablesOffset: 0x4000,
-	ConsumablesCount: 1024
+	ConsumablesCount: 1024,
+	MaterialsBase: 6588,
+	MaterialsOffset: 0x6000,
+	MaterialsCount: 512
 };
 
 export const DIFFICULTY_NAMES: Record<number, string> = {

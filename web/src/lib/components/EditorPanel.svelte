@@ -84,7 +84,7 @@
 			<CombatEditor />
 		{:else if activeTab === 'inventory'}
 			<div class="card">
-				<h2>Consumable Items</h2>
+				<h2>Inventory</h2>
 				<InventoryEditor />
 			</div>
 		{:else if activeTab === 'achievements'}
