@@ -27,8 +27,17 @@ export function getItemName(type: EquipSlotType, itemId: number): string {
 	return SLOT_NAMES[type][itemId] ?? `Unknown (${itemId})`;
 }
 
-export const EQUIP_BLOCK6_BASE = 209934;
 export const EQUIP_CHAR_STRIDE = 176;
+
+export const EQUIP_BLOCK_BASES = [
+	13234,
+	13230 + 32784,
+	13230 + 32784 * 2,
+	13230 + 32784 * 3,
+	13230 + 32784 * 4,
+	13230 + 32784 * 5,
+	13230 + 32784 * 6
+];
 
 export const EQUIP_CHARACTERS = [
 	{ key: 'protagonist', name: 'Protagonist', offset: 0 },
@@ -43,7 +52,7 @@ export const EQUIP_CHARACTERS = [
 	{ key: 'shinjiro', name: 'Shinjiro', offset: 9 }
 ];
 
-export function getEquipDataIds(charIndex: number): { weaponArmor: number; footAcc: number; costume: number } {
-	const base = EQUIP_BLOCK6_BASE + charIndex * EQUIP_CHAR_STRIDE;
+export function getEquipDataIds(blockBase: number, charIndex: number): { weaponArmor: number; footAcc: number; costume: number } {
+	const base = blockBase + charIndex * EQUIP_CHAR_STRIDE;
 	return { weaponArmor: base, footAcc: base + 1, costume: base + 2 };
 }
