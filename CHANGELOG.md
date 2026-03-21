@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-03-20
+
+### Added
+- Equipment editor for all 10 party members with 5 slots each (weapon, body armor, footwear, accessory, costume)
+- Searchable item dropdowns (ItemSelect component) for equipment and persona selection
+- Breadcrumb file bar showing current save filename with Change and Export actions
+
+### Changed
+- Persona selector upgraded from plain dropdown to searchable combobox
+- Export button moved to breadcrumb bar, restyled to match UI
+- Removed redundant bottom action bar
+
 ## [1.2.0] - 2026-03-20
 
 ### Added

@@ -20,6 +20,7 @@
 		type CharacterData
 	} from '$lib/save/combat-queries.js';
 	import SkillSelect from './SkillSelect.svelte';
+	import ItemSelect from './ItemSelect.svelte';
 
 	interface CharacterState {
 		char: CharacterDef;
@@ -190,16 +191,12 @@
 
 							<div class="persona-header-row">
 								<div class="persona-select-field">
-									<select
-										class="persona-dropdown"
+									<ItemSelect
 										value={persona.personaId}
-										onchange={(e) => handlePersonaChange(stateIdx, slotIdx, (e.target as HTMLSelectElement).value)}
-									>
-										<option value={0}>Empty</option>
-										{#each PERSONA_LIST as [id, name] (id)}
-											<option value={id}>{name} (#{id})</option>
-										{/each}
-									</select>
+										items={PERSONA_NAMES}
+										placeholder="Search personas..."
+										onchange={(id) => handlePersonaChange(stateIdx, slotIdx, String(id))}
+									/>
 								</div>
 
 								{#if state.char.key === 'protagonist'}

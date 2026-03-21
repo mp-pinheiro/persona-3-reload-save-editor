@@ -11,6 +11,7 @@
 	import DateTimeEditor from './DateTimeEditor.svelte';
 	import CombatEditor from './CombatEditor.svelte';
 	import InventoryEditor from './InventoryEditor.svelte';
+	import EquipmentEditor from './EquipmentEditor.svelte';
 	import PlayerNameEditor from './PlayerNameEditor.svelte';
 	import { FEATURES } from '$lib/config/features.js';
 
@@ -22,6 +23,7 @@
 		{ id: 'social-links' as const, label: 'Social Links' },
 		{ id: 'combat' as const, label: 'Combat' },
 		{ id: 'inventory' as const, label: 'Inventory' },
+		{ id: 'equipment' as const, label: 'Equipment' },
 		{ id: 'achievements' as const, label: 'Achievements', feature: 'achievements' as const },
 		{ id: 'story' as const, label: 'Story Flags' }
 	];
@@ -39,6 +41,13 @@
 </script>
 
 <div class="editor-panel">
+	<div class="file-bar">
+		<span class="file-label">Editing: <strong>{$saveStore.file?.name ?? ''}</strong></span>
+		<div class="file-actions">
+			<button class="file-change" onclick={resetSave}>Change</button>
+			<ExportButton />
+		</div>
+	</div>
 	<div class="tabs">
 		{#each tabs as tab}
 			<button
@@ -87,6 +96,8 @@
 				<h2>Inventory</h2>
 				<InventoryEditor />
 			</div>
+		{:else if activeTab === 'equipment'}
+			<EquipmentEditor />
 		{:else if activeTab === 'achievements'}
 			<div class="card">
 				<h2>Achievement Progress</h2>
@@ -100,10 +111,6 @@
 		{/if}
 	</div>
 
-	<div class="actions">
-		<button class="btn btn-secondary" onclick={resetSave}>Load Different File</button>
-		<ExportButton />
-	</div>
 </div>
 
 <style>
@@ -116,12 +123,46 @@
 		min-height: 300px;
 	}
 
-	.actions {
+	.file-bar {
 		display: flex;
-		gap: 1rem;
-		justify-content: center;
-		margin-top: 2rem;
-		padding-top: 2rem;
-		border-top: 1px solid var(--border);
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.5rem 0.875rem;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: 0.5rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.file-label {
+		font-size: 0.8125rem;
+		color: var(--text-muted);
+	}
+
+	.file-label strong {
+		color: var(--text-secondary);
+		font-family: monospace;
+	}
+
+	.file-actions {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.file-change {
+		padding: 0.25rem 0.625rem;
+		background: none;
+		border: 1px solid var(--border-light);
+		border-radius: 0.25rem;
+		color: var(--text-muted);
+		font-size: 0.75rem;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.file-change:hover {
+		color: var(--accent-light);
+		border-color: var(--accent);
 	}
 </style>

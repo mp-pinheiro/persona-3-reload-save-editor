@@ -52,11 +52,11 @@
 	}
 </script>
 
-<button class="btn btn-success" disabled={isExporting} onclick={requestExport}>
+<button class="export-btn" disabled={isExporting} onclick={requestExport}>
 	{#if isExporting}
 		Exporting...
 	{:else}
-		Download Modified Save
+		Export Save
 	{/if}
 </button>
 
@@ -136,5 +136,26 @@
 
 	:global(.btn-danger:hover:not(:disabled)) {
 		background: #dc2626;
+	}
+
+	.export-btn {
+		padding: 0.25rem 0.75rem;
+		background: var(--accent);
+		border: none;
+		border-radius: 0.25rem;
+		color: white;
+		font-size: 0.75rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition: background 0.15s ease;
+	}
+
+	.export-btn:hover:not(:disabled) {
+		background: var(--accent-hover);
+	}
+
+	.export-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 </style>

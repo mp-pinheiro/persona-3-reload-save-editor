@@ -21,7 +21,16 @@ A browser-based save editor for Persona 3 Reload. Reads, modifies, and writes sa
 
 **Combat**
 - Edit level, EXP, HP, and SP for all party members
-- Edit persona slots: persona selection, level, EXP, skills (8 slots), and stats (St/Ma/En/Ag/Lu)
+- Edit persona slots: searchable persona selection, level, EXP, skills (8 slots), and stats (St/Ma/En/Ag/Lu)
+
+**Inventory**
+- Edit consumable item quantities (266 items: healing, battle, incense, food, gifts, books)
+- Edit material quantities (296 items: gems, nihil crafting, heart items, dungeon materials)
+- Search, filter, and "Max All Owned" bulk action
+
+**Equipment**
+- View and edit all 5 equipment slots (weapon, body armor, footwear, accessory, costume) for all 10 party members
+- Searchable item dropdowns with full item name database
 
 **Story Flags**
 - Set game completion status (pre-Nyx, good ending, bad ending)
